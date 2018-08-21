@@ -1,0 +1,181 @@
+@charset "UTF-8";
+$BleuClair: #48a3c6;
+$BleuFonce: #232f3e;
+$couleurStd: black;
+$couleurMenu: white;
+$header_height_min: 32px;
+$header_height_max: 75px;
+//--------------------------------------------------------------------------------------------------------
+//PLACEHOLDER
+// centrage des éléments par rapport au conteneur parent
+%block-center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+// définition de la taille du texte par défaut
+%font-px-std {
+	@media screen and (min-width: 1120px) {
+		font-size: 30px;
+	}
+	font-size: 14px;
+}
+
+// mise en forme couleur standard noire
+%font-std {
+	font-family: 'Times New Roman', Times, serif;
+	color: $couleurStd;
+}
+
+// Mise en forme couleur blanche (menu)
+%font-white {
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	color: $couleurMenu;
+}
+
+//--------------------------------------------------------------------------------------------------------
+//MIXIN
+// Formatage du css flex avec toutes ses méthodes définites par défaut
+@mixin flex($direction:row, $justify:center, $align:center, $wrap:nowrap) {
+	display: flex;
+	flex-direction: $direction; //row, row-reverse, column, column-reverse
+	justify-content: $justify; //flex-start, flex-end, center, space-between, space-around
+	align-items: $align; //idem $justify mais pour l'autre axe
+	flex-wrap: $wrap; //nowrap, wrap, wrap-reverse
+}
+
+@mixin taille_image($dimension) {
+	height: $dimension;
+	width: $dimension;
+	background-size: $dimension;
+}
+
+//--------------------------------------------------------------------------------------------------------
+//Corps général de la page
+body {
+	background-image: url("casque.jpg");
+	background-attachment: fixed;
+	background-size: cover;
+	margin: 0;
+	padding: 0;
+}
+
+// Contenu général de la page hors Header / Footer
+#contenu {
+	@include flex(column,
+	center);
+	@extend %font-std;
+	@extend %font-px-std;
+	text-align: center; //margin-top: 10%;
+	padding-top: $header_height_min*1.10;
+	@media screen and (min-width: 1120px) {
+		padding-top: $header_height_max*1.10;
+	}
+}
+
+// cadre blanc transparent de la page
+#cadreBlanc {
+	@include flex(column,
+	center);
+	width: 95%;
+	height: 95%;
+	background-color: RGBa(150, 150, 150, 0.4);
+	border-radius: 10%;
+}
+
+//--------------------------------------------------------------------------------------------------------
+//FORMULAIRE
+form {
+	@extend %block-center;
+}
+
+fieldset {
+	border: 2px $BleuClair solid;
+}
+
+legend {
+	font-weight: bold;
+	color: $BleuClair;
+}
+
+.form_ligne
+{
+	@media screen and (min-width: 1120px)
+	{
+		@include flex(row);
+	}
+}
+
+.form_label {
+	@extend %block-center;
+	@media screen and (min-width: 1120px)
+	{
+		width: 200px;
+		float: left;
+	}
+	margin: 3px 0px 0px 0px;
+}
+
+.form_input {
+	@media screen and (min-width: 1120px)
+	{
+		width: 200px;
+	}
+	margin: 3px 3px 0px 0px;
+}
+
+.form_submit {
+	margin-top: 20px;
+}
+
+.form_requis {
+	color: #c00;
+}
+
+//--------------------------------------------------------------------------------------------------------
+//HEADER
+header {
+	@include flex(row,
+	space-between);
+	@extend %font-white;
+	@extend %font-px-std;
+	background-color: $BleuFonce;
+	top: 0;
+	margin-bottom: 10px;
+	width: 100%;
+	height: 32px;
+	position: fixed;
+	@media screen and (min-width: 1120px) {
+		height: 75px;
+	}
+}
+
+#header_recherche {
+	background-image: url("recherche.png");
+	background-attachment: fixed;
+	@include taille_image(32px);
+	background-repeat: no-repeat;
+	display: flex;
+	@media screen and (min-width: 1120px) {
+		@include taille_image(75px);
+	}
+}
+
+#search {
+	@extend %font-std;
+}
+
+//--------------------------------------------------------------------------------------------------------
+//FOOTER
+footer {
+	@include flex(row,
+	flex-start);
+	@extend %font-white;
+	@extend %font-px-std;
+	background-color: $BleuFonce;
+	width: 100%;
+	height: 30px;
+	position: fixed;
+	bottom: 0;
+}

@@ -1,0 +1,126 @@
+form, .form_label {
+  display: block;
+  margin-left: auto;
+  margin-right: auto; }
+
+#contenu, header, footer {
+  font-size: 14px; }
+  @media screen and (min-width: 1120px) {
+    #contenu, header, footer {
+      font-size: 30px; } }
+
+#contenu, #search {
+  font-family: 'Times New Roman', Times, serif;
+  color: black; }
+
+header, footer {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: white; }
+
+body {
+  background-image: url("casque.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 0; }
+
+#contenu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  text-align: center;
+  padding-top: 35.2px; }
+  @media screen and (min-width: 1120px) {
+    #contenu {
+      padding-top: 82.5px; } }
+
+#cadreBlanc {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 95%;
+  height: 95%;
+  background-color: RGBa(150, 150, 150, 0.4);
+  border-radius: 10%; }
+
+fieldset {
+  border: 2px #48a3c6 solid; }
+
+legend {
+  font-weight: bold;
+  color: #48a3c6; }
+
+@media screen and (min-width: 1120px) {
+  .form_ligne {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap; } }
+
+.form_label {
+  margin: 3px 0px 0px 0px; }
+  @media screen and (min-width: 1120px) {
+    .form_label {
+      width: 200px;
+      float: left; } }
+
+.form_input {
+  margin: 3px 3px 0px 0px; }
+  @media screen and (min-width: 1120px) {
+    .form_input {
+      width: 200px; } }
+
+.form_submit {
+  margin-top: 20px; }
+
+.form_requis {
+  color: #c00; }
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  background-color: #232f3e;
+  top: 0;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 32px;
+  position: fixed; }
+  @media screen and (min-width: 1120px) {
+    header {
+      height: 75px; } }
+
+#header_recherche {
+  background-image: url("recherche.png");
+  background-attachment: fixed;
+  height: 32px;
+  width: 32px;
+  background-size: 32px;
+  background-repeat: no-repeat;
+  display: flex; }
+  @media screen and (min-width: 1120px) {
+    #header_recherche {
+      height: 75px;
+      width: 75px;
+      background-size: 75px; } }
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+  background-color: #232f3e;
+  width: 100%;
+  height: 30px;
+  position: fixed;
+  bottom: 0; }
+
+/*# sourceMappingURL=stylesheet.css.map */
