@@ -18,7 +18,12 @@
 				</c:if>
 			</aside>
 
-			<p>INDEX</p>
+			<p>ceci est le test du listing des clients</p>
+			<c:forEach var="lc" items="${ clients }">
+				<p>
+					<c:out value="${ lc.toString() }" />
+				</p>
+			</c:forEach>
 		</section>
 	</section>
 </body>
