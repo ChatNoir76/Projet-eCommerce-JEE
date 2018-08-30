@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.afpa.ecom.modele.Client;
+import fr.afpa.ecom.service.Service;
 
 public class ConnexionForm {
 
@@ -25,8 +26,8 @@ public class ConnexionForm {
     public Client connecterUtilisateur( HttpServletRequest request ) {
 
         /* Récupération des champs du formulaire */
-        String email = getValeurChamp( request, CHAMP_EMAIL );
-        String motDePasse = getValeurChamp( request, CHAMP_PASS );
+        String email = Service.getValeurChamp( request, CHAMP_EMAIL );
+        String motDePasse = Service.getValeurChamp( request, CHAMP_PASS );
         Client c = new Client();
 
         /* Validation du champ email. */
@@ -93,19 +94,5 @@ public class ConnexionForm {
         erreurs.put( champ, message );
     }
 
-    /*
-     * 
-     * Méthode utilitaire qui retourne null si un champ est vide, et son contenu
-     * 
-     * sinon.
-     * 
-     */
-    private static String getValeurChamp( HttpServletRequest request, String nomChamp ) {
-        String valeur = request.getParameter( nomChamp );
-        if ( valeur == null || valeur.trim().length() == 0 ) {
-            return null;
-        } else {
-            return valeur;
-        }
-    }
+
 }

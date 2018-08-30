@@ -9,4 +9,12 @@
       <include-coda>/WEB-INF/vue/include/footer.jsp</include-coda>
     </jsp-property-group>
   </jsp-config>
+  <filter>
+      <filter-name>Restriction</filter-name>
+      <filter-class>fr.afpa.ecom.filtres.Restriction</filter-class>
+  </filter>
+  <filter-mapping>
+      <filter-name>Restriction</filter-name>
+      <url-pattern>/restriction/*</url-pattern>
+  </filter-mapping>
 </web-app>

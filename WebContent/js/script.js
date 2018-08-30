@@ -1,11 +1,10 @@
 $(document).ready(function()
 {
-    var $gtc = $('.getFormConnexion');
+    // var $closeClientConnexion = $('#disconnected');
 
-    // $gtc.on('click', function(){
-    //     alert(localStorage['page']);
-    //     localStorage['page'] = "connexion";
-    //     alert(localStorage['page']);
+    // $closeClientConnexion.on('click', function(){
+    //     localStorage['client'] = null;
+    //     alert("déconnecté...");
     //     document.location.href = "/eCommerce/index";
     // });
     

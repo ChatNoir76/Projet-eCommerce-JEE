@@ -16,8 +16,7 @@
 					        <a href="/eCommerce/connexion">Connexion</a>
 					    </c:if>
 				    	<c:if test="${!empty sessionScope.client}">
-					        <p class="succes">${sessionScope.client.get_mail()}</p>
-					        <p>Déconnexion</p>
+					        <a href="/eCommerce/deconnexion">Déconnexion</a>
 					    </c:if>
 			    	</li>
 			    	<li>
@@ -26,5 +25,8 @@
 			    </ul>
 		    </div>
 	    </div>
+	    <c:if test="${!empty sessionScope.client}">
+	        <p class="succes">${sessionScope.client.get_mail()}</p>
+	    </c:if>
     </nav>
 </header>
