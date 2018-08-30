@@ -24,18 +24,18 @@
 
 						<legend>Connexion</legend>
 
-						<p>Vous pouvez vous connecter via ce formulaire.</p>
-
-						<div class="form_ligne">
-							<label class="form_label" for="email">Adresse email <span class="form_requis">*</span></label> 
-							<input class="form_input" type="text" id="email" name="email" value="" maxlength="60" required/> <br /> 
+						<div class="form-group form_ligne">
+							<label class="form_label" for="email">Adresse email</label> 
+							<input class="form_input" type="text" id="email" name="email" value="" maxlength="60" required/>
+							<span class="form_requis">*</span><br /> 
 						</div>
-						<div class="form_ligne">
-							<label class="form_label" for="motdepasse">Mot de passe <span class="form_requis">*</span></label> 
-							<input class="form_input" type="password" id="motdepasse" name="motdepasse" value="" maxlength="20" required/><br /> 
+						<div class="form-group form_ligne">
+							<label class="form_label" for="motdepasse">Mot de passe</label> 
+							<input class="form_input" type="password" id="motdepasse" name="motdepasse" value="" maxlength="20" required/>
+							<span class="form_requis">*</span><br /> 
 						</div>
-						<input type="submit" value="Connexion" class="form_submit" />
-						<input type="hidden" id="formulaire" name="formulaire" value="client_connexion">
+						<input type="submit" value="Connexion" class="btn btn-primary form_submit" />
+						<input type="hidden" id="formulaire" name="formulaire" value="form_clientconnexion">
 					</fieldset>
 
 				</form>

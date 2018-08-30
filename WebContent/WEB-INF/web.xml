@@ -3,9 +3,9 @@
   <jsp-config>
     <jsp-property-group>
       <url-pattern>*.jsp</url-pattern>
-      <include-prelude>/WEB-INF/vue/auto/taglibs.jsp</include-prelude>
-      <include-prelude>/WEB-INF/vue/auto/header.jsp</include-prelude>
-      <include-coda>/WEB-INF/vue/auto/footer.jsp</include-coda>
+      <include-prelude>/WEB-INF/vue/include/taglibs.jsp</include-prelude>
+      <include-prelude>/WEB-INF/vue/include/header.jsp</include-prelude>
+      <include-coda>/WEB-INF/vue/include/footer.jsp</include-coda>
     </jsp-property-group>
   </jsp-config>
 </web-app>
