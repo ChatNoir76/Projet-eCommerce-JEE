@@ -5,6 +5,7 @@
       <url-pattern>*.jsp</url-pattern>
       <include-prelude>/WEB-INF/vue/include/taglibs.jsp</include-prelude>
       <include-prelude>/WEB-INF/vue/include/header.jsp</include-prelude>
+      <include-prelude>/WEB-INF/vue/include/message.jsp</include-prelude>
       <include-coda>/WEB-INF/vue/include/footer.jsp</include-coda>
     </jsp-property-group>
   </jsp-config>

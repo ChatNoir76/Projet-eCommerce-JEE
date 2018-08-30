@@ -57,18 +57,15 @@ public class Controleur extends HttpServlet {
     }
 
     private void initialize( HttpServletRequest req, HttpServletResponse resp ) {
+        // _request.getContextPath() => /eCommerce
+        // _request.getServletPath() => /index
+        // _request.getRequestURI() => /eCommerce/index
+        
         _request = req;
         _response = resp;
 
         // récupération de l'url appelée
         String _nextPage = _request.getRequestURI();
-
-        try {
-            _response.getWriter().append( _request.getContextPath() );
-        } catch ( IOException e ) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         
         // activation ou récupération variables de session
         _session = _request.getSession();
@@ -107,6 +104,11 @@ public class Controleur extends HttpServlet {
             throws ServletException, IOException {
         initialize( request, response );
 
+//        _response.getWriter().append("getContextPath() => ").append( _request.getContextPath() );
+//        _response.getWriter().append(" || getServletPath() => ").append( _request.getServletPath() );
+
+        // _request.setAttribute( "erreur", "L'identification de connexion à échouée !!!" );
+        
         navigateTo(_NEXTVIEW);
     }
 
@@ -147,8 +149,6 @@ public class Controleur extends HttpServlet {
         }
     }
 
-    private void recup() {
-
         // CONNEXION (DoPost)
         /*
          * int verif = 0; String email = request.getParameter( GET_CHAMP_EMAIL
@@ -178,7 +178,5 @@ public class Controleur extends HttpServlet {
          * this.getServletContext().getRequestDispatcher( VUE ).forward(
          * request, response );
          */
-
-    }
 
 }

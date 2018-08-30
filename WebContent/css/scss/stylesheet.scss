@@ -32,6 +32,7 @@ $header_height_max: 75px;
 %font-white {
 	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 	color: $couleurMenu;
+
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -68,10 +69,6 @@ body {
 	@extend %font-std;
 	@extend %font-px-std;
 	text-align: center; //margin-top: 10%;
-	padding-top: $header_height_min*1.10;
-	@media screen and (min-width: 1120px) {
-		padding-top: $header_height_max*1.10;
-	}
 }
 
 // cadre blanc transparent de la page
@@ -82,6 +79,15 @@ body {
 	height: 95%;
 	background-color: RGBa(150, 150, 150, 0.4);
 	border-radius: 10%;
+}
+
+#message {
+	display: block;
+	text-align: center;
+		padding-top: $header_height_min*1.10;
+	@media screen and (min-width: 1120px) {
+		padding-top: $header_height_max*1.10;
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -137,17 +143,17 @@ legend {
 //HEADER
 header {
 	@include flex(row,
-	space-between);
+	flex-start);
 	@extend %font-white;
 	@extend %font-px-std;
 	background-color: $BleuFonce;
 	top: 0;
 	margin-bottom: 10px;
 	width: 100%;
-	height: 32px;
+	height: $header_height_min;
 	position: fixed;
 	@media screen and (min-width: 1120px) {
-		height: 75px;
+		height: $header_height_max;
 	}
 }
 

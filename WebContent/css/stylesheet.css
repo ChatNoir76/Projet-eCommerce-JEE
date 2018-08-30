@@ -30,11 +30,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-wrap: nowrap;
-  text-align: center;
-  padding-top: 35.2px; }
-  @media screen and (min-width: 1120px) {
-    #contenu {
-      padding-top: 82.5px; } }
+  text-align: center; }
 
 #cadreBlanc {
   display: flex;
@@ -46,6 +42,14 @@ body {
   height: 95%;
   background-color: RGBa(150, 150, 150, 0.4);
   border-radius: 10%; }
+
+#message {
+  display: block;
+  text-align: center;
+  padding-top: 35.2px; }
+  @media screen and (min-width: 1120px) {
+    #message {
+      padding-top: 82.5px; } }
 
 fieldset {
   border: 2px #48a3c6 solid; }
@@ -84,7 +88,7 @@ legend {
 header {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   flex-wrap: nowrap;
   background-color: #232f3e;

@@ -8,16 +8,7 @@
 </head>
 <body>
 	<section id='contenu' class='contenu'>
-		<nav></nav>
 		<section id='cadreBlanc' class='cadreBlanc'>
-			<aside>
-				<c:if test="${ !empty erreur }">
-					<p style="color: red;">
-						<c:out value="${ erreur }" />
-					</p>
-				</c:if>
-			</aside>
-
 			<p>INDEX</p>
 		</section>
 	</section>
