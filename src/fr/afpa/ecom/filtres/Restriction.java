@@ -35,16 +35,14 @@ public class Restriction implements Filter {
         
         Client c = Service.getSessionClient( session );
         int lvl = Service.getSessionLevel( session );
+ 
         
-        response.getWriter().append( "client id=" + c.get_id() + " de niveau : " + lvl);
         
-//        if ( session.getAttribute( ATT_SESSION_USER ) == null ) {
-//            response.getWriter().append( "PAS POSSIBLE id=" );
-//            //response.sendRedirect( request.getContextPath() + ACCES_PUBLIC );
-//        } else {
-//            response.getWriter().append( "ok, continu..." );
-//            //chain.doFilter( request, response );
-//        }
+        if ( session.getAttribute( ATT_SESSION_USER ) == null ) {
+            response.getWriter().append( "le compte est en invité" );
+        } else {
+            response.getWriter().append( "client id=" + c.get_id() + " de niveau : " + lvl);
+        }
     }
 
     @Override

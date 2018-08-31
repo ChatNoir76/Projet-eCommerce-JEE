@@ -12,22 +12,21 @@
 				    	<a href="/eCommerce/index">Accueil</a>
 				    </li>
 			    	<li>
-			    		<c:if test="${empty sessionScope.client}">
-					        <a href="/eCommerce/connexion">Connexion</a>
-					    </c:if>
-				    	<c:if test="${!empty sessionScope.client}">
-					        <a href="/eCommerce/deconnexion">Déconnexion</a>
-					    </c:if>
-			    	</li>
-			    	<li>
-			    	    
+				    	<c:if test="${sessionScope.clientStatut >= 4}">
+				    	    <a href="/eCommerce/listeClient">liste client</a>
+			    	   	</c:if>
 			    	</li>
 			    </ul>
-				<div class="navbar-right">
-				    <c:if test="${!empty sessionScope.client}">
-				        <p class="succes">${sessionScope.client.get_mail()}</p>
+  			    <div class="navbar-right">
+		    		<c:if test="${empty sessionScope.client}">
+				        <a href="/eCommerce/connexion">Connexion</a>
 				    </c:if>
-			    </div>
+			    	<c:if test="${!empty sessionScope.client}">
+				        <a href="/eCommerce/deconnexion">
+				        Déconnexion(<span class="succes">${sessionScope.client.get_mail()}</span>
+				        )</a>
+				    </c:if>
+		    	</div>
 		    </div>
 	    </div>
 

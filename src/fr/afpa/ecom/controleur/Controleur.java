@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import fr.afpa.ecom.forms.ConnexionForm;
 import fr.afpa.ecom.modele.Client;
+import fr.afpa.ecom.modele.Commande;
+import fr.afpa.ecom.modele.Fournisseur;
+import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.AbstractDAOFactory;
 import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.dao.EnumDAO;
@@ -39,9 +41,9 @@ public class Controleur extends HttpServlet {
 
     private static final String ATT_CLIENT       = "client";
     private static final String ATT_CLIENT_STT   = "clientStatut";
-
-    // ATT : attribut variable de session
     private static final String ATT_LASTPAGE     = "page";
+    private static final String ATT_LISTE_CLIENT = "listclient";
+    private static final String ATT_LISTE_PRODUIT = "listproduit";
 
     // PARAM : paramètre de formulaire via methode post
     private static final String PARAM_FORMULAIRE = "formulaire";
@@ -50,7 +52,6 @@ public class Controleur extends HttpServlet {
     private static final String CHAMP_PASS       = "motdepasse";
 
     private AbstractDAOFactory daoFact;
-    private DAOCP<Client> daoClient;
     
     private String              _NEXTVIEW;
     private String              _lastPage;
@@ -70,7 +71,7 @@ public class Controleur extends HttpServlet {
     public static String getATT_CLIENT_STT() {
         return ATT_CLIENT_STT;
     }
-
+    
     private void initialize( HttpServletRequest req, HttpServletResponse resp ) throws DaoException, connexionException {
         // _request.getContextPath() => /eCommerce
         // _request.getServletPath() => /index
@@ -86,9 +87,11 @@ public class Controleur extends HttpServlet {
 
         // récupération variables de fonctionnement
         String viaFormulaire = _request.getParameter( PARAM_FORMULAIRE );
-
         _lastPage = (String) _session.getAttribute( ATT_LASTPAGE );
 
+        // initialisation des dao
+        daoFact = AbstractDAOFactory.getFactory( EnumDAO.MySQL );
+       
         // vérification via formulaire
         if ( viaFormulaire != null ) {
             traitementFormulaires();
@@ -105,9 +108,11 @@ public class Controleur extends HttpServlet {
             break;
         case HREF_INDEX:
             _NEXTVIEW = VUE_INDEX;
+            setListProduit();
             break;
         case HREF_LISTECLIENT:
             _NEXTVIEW = VUE_LISTECLIENT;
+            setListClient();
             break;
         default:
             _NEXTVIEW = VUE_INDEX;
@@ -147,14 +152,22 @@ public class Controleur extends HttpServlet {
         doGet( request, response );
     }
 
+    private void setListProduit() throws DaoException
+    {
+        _request.setAttribute(ATT_LISTE_PRODUIT, daoFact.getProduit().getAll() );
+    }
+    
+    private void setListClient() throws DaoException
+    {
+        _request.setAttribute(ATT_LISTE_CLIENT, daoFact.getClient().getAll() );
+    }
+    
     private void traitementFormulaires() throws DaoException, connexionException {
         switch ( _request.getParameter( "formulaire" ) ) {
         case "form_clientconnexion":
-            daoFact = AbstractDAOFactory.getFactory( EnumDAO.MySQL );
-            daoClient = daoFact.getClient();
             String mail = Service.getValeurChamp( _request, CHAMP_EMAIL );
             String mdp = Service.getValeurChamp( _request, CHAMP_PASS );
-            Service.connexionClient( _session, daoClient, mail, mdp );
+            Service.connexionClient( _session, daoFact.getClient(), mail, mdp );
             break;
         }
     }

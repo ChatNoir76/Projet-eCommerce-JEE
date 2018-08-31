@@ -28,7 +28,8 @@ public class Service {
         JOptionPane.showMessageDialog( null, message, "Erreur", JOptionPane.ERROR_MESSAGE );
     }
 
-    public static Client getClientFromList( ArrayList<Client> maListe, String email, String mdp ) throws connexionException {
+    public static Client getClientFromList( ArrayList<Client> maListe, String email, String mdp )
+            throws connexionException {
 
         Client temp = null;
 
@@ -37,8 +38,14 @@ public class Service {
                 temp = c;
             }
         }
-        if (temp == null) { throw new connexionException("combinaison email / mot de passe incorrecte...");};
-        return ( temp.get_motDePasse().equals( mdp ) ? temp : null );
+
+        if ( temp == null ) {
+            throw new connexionException( "Combinaison email / mot de passe incorrecte..." );
+        }
+        if ( !temp.get_motDePasse().equals( mdp ) ) {
+            throw new connexionException( "Combinaison email / mot de passe incorrecte..." );
+        }
+        return temp;
     }
 
     /*
@@ -62,20 +69,22 @@ public class Service {
     }
 
     public static int getSessionLevel( HttpSession session ) {
-        return (int) session.getAttribute( ATT_CLIENT_STT );
+        return session.getAttribute( ATT_CLIENT_STT ) == null ? -1 : (int) session.getAttribute( ATT_CLIENT_STT );
     }
 
-    public static void deconnexionClient(HttpSession session) {
+    public static void deconnexionClient( HttpSession session ) {
         session.setAttribute( ATT_CLIENT, null );
         session.setAttribute( ATT_CLIENT_STT, null );
     }
-    
-    public static void connexionClient(HttpSession session, DAOCP<Client> daoClient, String mail, String mdp) throws connexionException, DaoException 
-    {
+
+    public static void connexionClient( HttpSession session, DAOCP<Client> daoClient, String mail, String mdp )
+            throws connexionException, DaoException {
         Client c = null;
-            c = getClientFromList(daoClient.getAll(), mail, mdp);
+        c = getClientFromList( daoClient.getAll(), mail, mdp );
+        if ( c != null ) {
             session.setAttribute( ATT_CLIENT, c );
             session.setAttribute( ATT_CLIENT_STT, daoClient.getDernierStatut( c.get_id() ) );
+        }
     }
-    
+
 }

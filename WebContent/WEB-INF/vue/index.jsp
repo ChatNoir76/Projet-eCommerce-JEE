@@ -9,7 +9,12 @@
 <body>
 	<section id='contenu' class='contenu'>
 		<section id='cadreBlanc' class='cadreBlanc'>
-			<p>INDEX</p>
+			<p>Bienvenu sur le site eCommerce</p>
+			<c:forEach var="lc" items="${ listproduit }">
+				<p>
+					<c:out value="${ lc.toString() }" />
+				</p>
+			</c:forEach>
 		</section>
 	</section>
 </body>

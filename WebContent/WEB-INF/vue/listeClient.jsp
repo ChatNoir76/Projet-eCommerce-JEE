@@ -10,7 +10,7 @@
 	<section id='contenu' class='contenu'>
 		<section id='cadreBlanc' class='cadreBlanc'>
 			<p>ceci est le test du listing des clients</p>
-			<c:forEach var="lc" items="${ clients }">
+			<c:forEach var="lc" items="${ listclient }">
 				<p>
 					<c:out value="${ lc.toString() }" />
 				</p>

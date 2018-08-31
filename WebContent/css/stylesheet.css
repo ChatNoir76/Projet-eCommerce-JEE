@@ -4,10 +4,10 @@ form, .form_label {
   margin-right: auto; }
 
 #contenu, header, footer {
-  font-size: 14px; }
+  font-size: 10px; }
   @media screen and (min-width: 1120px) {
     #contenu, header, footer {
-      font-size: 30px; } }
+      font-size: 16px; } }
 
 #contenu, #search {
   font-family: 'Times New Roman', Times, serif;
