@@ -23,10 +23,14 @@
 			    	    
 			    	</li>
 			    </ul>
+				<div class="navbar-right">
+				    <c:if test="${!empty sessionScope.client}">
+				        <p class="succes">${sessionScope.client.get_mail()}</p>
+				    </c:if>
+			    </div>
 		    </div>
 	    </div>
-	    <c:if test="${!empty sessionScope.client}">
-	        <p class="succes">${sessionScope.client.get_mail()}</p>
-	    </c:if>
+
+	    
     </nav>
 </header>

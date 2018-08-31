@@ -101,7 +101,7 @@ public class Controleur extends HttpServlet {
             break;
         case HREF_DECONNEXION:
             _NEXTVIEW = VUE_INDEX;
-            // deconnexion();
+            Service.deconnexionClient( _session );
             break;
         case HREF_INDEX:
             _NEXTVIEW = VUE_INDEX;

@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import fr.afpa.ecom.modele.Client;
+import fr.afpa.ecom.service.Service;
+
 public class Restriction implements Filter {
 
     public static final String ATT_SESSION_USER = "client";
@@ -30,14 +33,18 @@ public class Restriction implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession();
         
-
-        if ( session.getAttribute( ATT_SESSION_USER ) == null ) {
-            response.getWriter().append( "PAS POSSIBLE id=" );
-            //response.sendRedirect( request.getContextPath() + ACCES_PUBLIC );
-        } else {
-            response.getWriter().append( "ok, continu..." );
-            //chain.doFilter( request, response );
-        }
+        Client c = Service.getSessionClient( session );
+        int lvl = Service.getSessionLevel( session );
+        
+        response.getWriter().append( "client id=" + c.get_id() + " de niveau : " + lvl);
+        
+//        if ( session.getAttribute( ATT_SESSION_USER ) == null ) {
+//            response.getWriter().append( "PAS POSSIBLE id=" );
+//            //response.sendRedirect( request.getContextPath() + ACCES_PUBLIC );
+//        } else {
+//            response.getWriter().append( "ok, continu..." );
+//            //chain.doFilter( request, response );
+//        }
     }
 
     @Override

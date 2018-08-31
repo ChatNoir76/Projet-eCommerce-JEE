@@ -15,9 +15,15 @@ import fr.afpa.ecom.modele.dao.DaoException;
  */
 class Singleton {
 	
-	private static String _url = "jdbc:mysql://localhost:3306/ecommerce?useUnicode=yes&characterEncoding=UTF-8&useSSL=true";
-	private static String _pwd = "myEclipse";
-	private static String _driver = "com.mysql.jdbc.Driver";
+	private static String _url = "jdbc:mysql://localhost:3306/ecommerce?"
+	        + "useUnicode=yes&"
+	        + "characterEncoding=UTF-8&"
+	        + "useSSL=true&noAccessToProcedureBodies=true&"
+	        + "useJDBCCompliantTimezoneShift=true&"
+	        + "useLegacyDatetimeCode=false&"
+	        + "serverTimezone=UTC";
+	private static String _pwd = "GoEclipse";
+	private static String _driver = "com.mysql.cj.jdbc.Driver";
 	private static String _user = "eclipse";
 	private static Connection _con = null;
 			
