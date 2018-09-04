@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import fr.afpa.ecom.controleur.Controleur;
 import fr.afpa.ecom.modele.Client;
+import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.dao.mysql.DAOCP;
 
@@ -77,14 +78,26 @@ public class Service {
         session.setAttribute( ATT_CLIENT_STT, null );
     }
 
-    public static void connexionClient( HttpSession session, DAOCP<Client> daoClient, String mail, String mdp )
+    public static void connexionClient( HttpSession session, String mail, String mdp )
             throws connexionException, DaoException {
         Client c = null;
-        c = getClientFromList( daoClient.getAll(), mail, mdp );
+        c = getClientFromList( Controleur.getDao().getClient().getAll(), mail, mdp );
         if ( c != null ) {
             session.setAttribute( ATT_CLIENT, c );
-            session.setAttribute( ATT_CLIENT_STT, daoClient.getDernierStatut( c.get_id() ) );
+            session.setAttribute( ATT_CLIENT_STT, Controleur.getDao().getClient().getDernierStatut( c.get_id() ) );
         }
     }
 
+    public static Produit getProduitFromStrId( String idProduit ) throws DaoException {
+
+        if ( idProduit == null ) {
+            return null;
+        } else {
+            int id = Integer.parseInt( idProduit );
+            Produit p;
+            p = Controleur.getDao().getProduit().getById( id );
+            return p;
+        }
+
+    }
 }
