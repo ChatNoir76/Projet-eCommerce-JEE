@@ -150,6 +150,17 @@ public class Produit {
 	
 
 	//CONSTRUCTEUR
+	public Produit()
+	{
+        _id=-1; 
+        _nomProduit=null;
+        _prixHT=0; 
+        _stockInventaire=0; 
+        _stockMin=0;
+        _stockObjectif=0;
+        _tva=0; 
+	}
+	
 	/**
 	 * @param id_produit
 	 * @param nom_produit

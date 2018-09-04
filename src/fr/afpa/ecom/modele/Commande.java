@@ -49,7 +49,14 @@ public class Commande {
 		this._creationCommande = _creationCommande;
 	}
 
-
+//	public Commande()
+//	{
+//	    _id=-1;
+//        _remiseGlobale = 0.0000d;
+//        _creationCommande = ServiceDAO.now();
+//        _idClient = -1;
+//	}
+	
 	public Commande(int id_client)
 	{
 		_id=-1;

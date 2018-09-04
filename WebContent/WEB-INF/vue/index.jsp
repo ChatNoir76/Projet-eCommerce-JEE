@@ -12,6 +12,7 @@
 			<p>Bienvenue sur le site eCommerce</p>
 			<c:forEach var="lc" items="${ listproduit }">
 					<c:out value="${ lc}" />
+					<button onClick="ajoutPanier(${ lc._id })">ajout panier</button>
 					<button onClick="voirProduit(${ lc._id })">voir</button>
 			</c:forEach>
 		</section>

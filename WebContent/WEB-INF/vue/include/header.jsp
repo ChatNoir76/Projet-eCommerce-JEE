@@ -12,9 +12,11 @@
 				    	<a href="/eCommerce/index">Accueil</a>
 				    </li>
 			    	<li>
-				    	<c:if test="${sessionScope.clientStatut >= 4}">
-				    	    <a href="/eCommerce/listeClient">liste client</a>
-			    	   	</c:if>
+				    	<c:if test="${!empty sessionScope.client}">
+					        <c:if test="${sessionScope.clientStatut >= 4}">
+					    	    <a href="/eCommerce/listeClient">liste client</a>
+				    	   	</c:if>
+					    </c:if>
 			    	</li>
 			    </ul>
   			    <div class="navbar-right">

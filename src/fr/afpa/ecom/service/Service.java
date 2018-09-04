@@ -13,21 +13,7 @@ import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.dao.mysql.DAOCP;
 
 public class Service {
-
-    private static final String ATT_CLIENT     = Controleur.getATT_CLIENT();
-    private static final String ATT_CLIENT_STT = Controleur.getATT_CLIENT_STT();
-
-    public static void mdInformation( String message ) {
-        JOptionPane.showMessageDialog( null, message, "Information", JOptionPane.INFORMATION_MESSAGE );
-    }
-
-    public static void mdAvertissement( String message ) {
-        JOptionPane.showMessageDialog( null, message, "Attention", JOptionPane.WARNING_MESSAGE );
-    }
-
-    public static void mdErreur( String message ) {
-        JOptionPane.showMessageDialog( null, message, "Erreur", JOptionPane.ERROR_MESSAGE );
-    }
+    
 
     public static Client getClientFromList( ArrayList<Client> maListe, String email, String mdp )
             throws connexionException {
@@ -66,16 +52,21 @@ public class Service {
     }
 
     public static Client getSessionClient( HttpSession session ) {
-        return (Client) session.getAttribute( ATT_CLIENT );
+        if ( session.getAttribute( Controleur.getATT_CLIENT() ) == null ) {
+            return null;
+        } else {
+            return (Client) session.getAttribute( Controleur.getATT_CLIENT() );
+        }
     }
 
     public static int getSessionLevel( HttpSession session ) {
-        return session.getAttribute( ATT_CLIENT_STT ) == null ? -1 : (int) session.getAttribute( ATT_CLIENT_STT );
+        return session.getAttribute( Controleur.getATT_CLIENT_STT() ) == null ? 0
+                : (int) session.getAttribute( Controleur.getATT_CLIENT_STT() );
     }
 
     public static void deconnexionClient( HttpSession session ) {
-        session.setAttribute( ATT_CLIENT, null );
-        session.setAttribute( ATT_CLIENT_STT, null );
+        session.setAttribute( Controleur.getATT_CLIENT(), null );
+        session.setAttribute( Controleur.getATT_CLIENT_STT(), null );
     }
 
     public static void connexionClient( HttpSession session, String mail, String mdp )
@@ -83,20 +74,18 @@ public class Service {
         Client c = null;
         c = getClientFromList( Controleur.getDao().getClient().getAll(), mail, mdp );
         if ( c != null ) {
-            session.setAttribute( ATT_CLIENT, c );
-            session.setAttribute( ATT_CLIENT_STT, Controleur.getDao().getClient().getDernierStatut( c.get_id() ) );
+            session.setAttribute( Controleur.getATT_CLIENT(), c );
+            session.setAttribute( Controleur.getATT_CLIENT_STT(),
+                    Controleur.getDao().getClient().getDernierStatut( c.get_id() ) );
         }
     }
 
-    public static Produit getProduitFromStrId( String idProduit ) throws DaoException {
+    public static Produit getProduitFromStrId( int idProduit ) throws DaoException {
 
-        if ( idProduit == null ) {
+        if ( idProduit < 0 ) {
             return null;
         } else {
-            int id = Integer.parseInt( idProduit );
-            Produit p;
-            p = Controleur.getDao().getProduit().getById( id );
-            return p;
+            return Controleur.getDao().getProduit().getById( idProduit );
         }
 
     }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.dao.EnumObject;
-import fr.afpa.ecom.service.Service;
+import fr.afpa.ecom.modele.dao.ServiceDAO;
 
 class DAOCP_Produit extends DAOCP<Produit> {
 
@@ -58,24 +58,23 @@ class DAOCP_Produit extends DAOCP<Produit> {
             cs.setInt( 5, obj.get_stockObjectif() );
             cs.setFloat( 6, obj.get_tva() );
             cs.setInt( 7, obj.get_typeProduit().get_id() );
-            cs.setDate( 8, null );
 
             // OUT
-            cs.registerOutParameter( 9, java.sql.Types.INTEGER );
-            cs.registerOutParameter( 10, java.sql.Types.VARCHAR );
-            cs.registerOutParameter( 11, java.sql.Types.INTEGER );
+            cs.registerOutParameter( 8, java.sql.Types.INTEGER );
+            cs.registerOutParameter( 9, java.sql.Types.VARCHAR );
+            cs.registerOutParameter( 10, java.sql.Types.INTEGER );
             cs.execute();
 
             // Récupération des OUT
-            errcode = cs.getInt( 9 );
-            errmsg = cs.getString( 10 );
-            id = cs.getInt( 11 );
+            errcode = cs.getInt( 8 );
+            errmsg = cs.getString( 9 );
+            id = cs.getInt( 10 );
 
             // Traitement des informations (id+erreurs)
             switch ( errcode ) {
             case 0: // pas d'erreur : récupération de l'id
                 obj.set_id( id );
-                Service.mdInformation( "Création du produit n°" + id + " effectué" );
+                ServiceDAO.mdInformation( "Création du produit n°" + id + " effectué" );
                 break;
             default:
                 throw new DaoException( errcode, errmsg );
@@ -103,7 +102,7 @@ class DAOCP_Produit extends DAOCP<Produit> {
         Produit p = null;
         ResultSet rs = null;
         try {
-            rs = con().createStatement().executeQuery( "SELECT * FROM " + getClasse() + " where id_client=" + id );
+            rs = con().createStatement().executeQuery( "SELECT * FROM " + getClasse() + " where id_produit=" + id );
 
             if ( rs.first() ) {
                 p = new Produit( rs.getInt( 1 ), rs.getString( 2 ), rs.getDouble( 3 ), rs.getInt( 4 ),

@@ -10,7 +10,6 @@ import fr.afpa.ecom.modele.Commande;
 import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.dao.EnumObject;
 import fr.afpa.ecom.modele.dao.ServiceDAO;
-import fr.afpa.ecom.service.Service;
 
 class DAOCP_Commande extends DAOCP<Commande> {
 
@@ -50,7 +49,7 @@ class DAOCP_Commande extends DAOCP<Commande> {
 			{
 			case 0: //pas d'erreur : récupération de l'id
 				obj.set_id(id);
-				Service.mdInformation("Création de la commande n°" + id + " effectuée");
+				ServiceDAO.mdInformation("Création de la commande n°" + id + " effectuée");
 				break;
 			default:
 				throw new DaoException(errcode,errmsg);
@@ -84,7 +83,7 @@ class DAOCP_Commande extends DAOCP<Commande> {
 			switch (errcode)
 			{
 			case 0: //pas d'erreur : récupération de l'id
-				Service.mdInformation("Commande n°" + obj.get_id() + " à été mise à jour");
+			    ServiceDAO.mdInformation("Commande n°" + obj.get_id() + " à été mise à jour");
 				break;
 			default:
 				throw new DaoException(errcode,errmsg);
@@ -117,7 +116,7 @@ class DAOCP_Commande extends DAOCP<Commande> {
 			switch (errcode)
 			{
 			case 0: //pas d'erreur : récupération de l'id
-				Service.mdInformation("Commande n°" + obj.get_id() + " à été supprimé de la base de données");
+			    ServiceDAO.mdInformation("Commande n°" + obj.get_id() + " à été supprimé de la base de données");
 				break;
 			default:
 				throw new DaoException(errcode,errmsg);

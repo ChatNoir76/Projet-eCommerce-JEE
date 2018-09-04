@@ -12,13 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import fr.afpa.ecom.controleur.Controleur;
 import fr.afpa.ecom.modele.Client;
 import fr.afpa.ecom.service.Service;
 
 public class Restriction implements Filter {
 
-    public static final String ATT_SESSION_USER = "client";
-    
     @Override
     public void destroy() {
         // TODO Auto-generated method stub
@@ -28,20 +27,17 @@ public class Restriction implements Filter {
     @Override
     public void doFilter( ServletRequest req, ServletResponse res, FilterChain chain )
             throws IOException, ServletException {
-        
+
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession();
-        
-        Client c = Service.getSessionClient( session );
-        int lvl = Service.getSessionLevel( session );
- 
-        
-        
-        if ( session.getAttribute( ATT_SESSION_USER ) == null ) {
+
+        if ( session.getAttribute( Controleur.getATT_CLIENT() ) == null ) {
             response.getWriter().append( "le compte est en invité" );
         } else {
-            response.getWriter().append( "client id=" + c.get_id() + " de niveau : " + lvl);
+            Client c = Service.getSessionClient( session );
+            int lvl = Service.getSessionLevel( session );
+            response.getWriter().append( "client id=" + c.get_id() + " de niveau : " + lvl );
         }
     }
 

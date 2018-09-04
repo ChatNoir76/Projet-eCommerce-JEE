@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDateTime;
 
+import javax.swing.JOptionPane;
+
 /**
  * @author chatnoir
  *         <p>
@@ -15,6 +17,19 @@ public class ServiceDAO {
     final public static String Statut     = "statut_";
     final public static String Historique = "histo_";
 
+    public static void mdInformation( String message ) {
+        JOptionPane.showMessageDialog( null, message, "Information", JOptionPane.INFORMATION_MESSAGE );
+    }
+
+    public static void mdAvertissement( String message ) {
+        JOptionPane.showMessageDialog( null, message, "Attention", JOptionPane.WARNING_MESSAGE );
+    }
+
+    public static void mdErreur( String message ) {
+        JOptionPane.showMessageDialog( null, message, "Erreur", JOptionPane.ERROR_MESSAGE );
+    }
+
+    
     /**
      * remplace un object string 'null' par un autre string défini
      * 
