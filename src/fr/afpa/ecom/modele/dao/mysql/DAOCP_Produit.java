@@ -74,7 +74,7 @@ class DAOCP_Produit extends DAOCP<Produit> {
             switch ( errcode ) {
             case 0: // pas d'erreur : récupération de l'id
                 obj.set_id( id );
-                ServiceDAO.mdInformation( "Création du produit n°" + id + " effectué" );
+                //ServiceDAO.mdInformation( "Création du produit n°" + id + " effectué" );
                 break;
             default:
                 throw new DaoException( errcode, errmsg );

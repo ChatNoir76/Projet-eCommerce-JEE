@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<p>Détail produit n°<c:out value="${monid}">?</c:out></p>
+	<p>Détail produit n°<c:out value="${monproduit._id}">?</c:out></p>
 	<c:if test="${!empty monproduit}">
 		<div>${monproduit.toString()}</div>
 	</c:if>

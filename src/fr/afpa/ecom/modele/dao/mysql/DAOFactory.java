@@ -5,7 +5,6 @@ import java.sql.Connection;
 import fr.afpa.ecom.modele.Client;
 import fr.afpa.ecom.modele.Commande;
 import fr.afpa.ecom.modele.Fournisseur;
-import fr.afpa.ecom.modele.Panier;
 import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.AbstractDAOFactory;
 import fr.afpa.ecom.modele.dao.DaoException;
@@ -31,7 +30,7 @@ private static Connection con; //=Singleton.getInstance();
 	public DAOCP<Commande> getCommande() {return new DAOCP_Commande(con);}
 	public DAOCP<Produit> getProduit() {return new DAOCP_Produit(con);}
 	public DAOCP<Fournisseur> getFournisseur() {return new DAOCP_Fournisseur(con);}
-	public DAOPanier getPanier(Panier p) {return new DAOPanier(con,p);}
+	public DAOPanier getPanier(int idClient) throws DaoException {return new DAOPanier(con,idClient);}
 
 	//FACTORY DES CLASSES SECONDAIRES
 	public DAO<Statut> getStatut(EnumObject eo) {return new DAO_Statut(con,eo);}

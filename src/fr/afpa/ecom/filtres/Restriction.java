@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import fr.afpa.ecom.controleur.Controleur;
+import fr.afpa.ecom.controleur.service.ServSession;
 import fr.afpa.ecom.modele.Client;
-import fr.afpa.ecom.service.Service;
 
 public class Restriction implements Filter {
 
@@ -32,11 +32,11 @@ public class Restriction implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession();
 
-        if ( session.getAttribute( Controleur.getATT_CLIENT() ) == null ) {
+        if ( session.getAttribute( Controleur.ATT_CLIENT ) == null ) {
             response.getWriter().append( "le compte est en invité" );
         } else {
-            Client c = Service.getSessionClient( session );
-            int lvl = Service.getSessionLevel( session );
+            Client c = ServSession.getSessionClient();
+            int lvl = ServSession.getSessionInt( Controleur.ATT_CLIENT_STT );
             response.getWriter().append( "client id=" + c.get_id() + " de niveau : " + lvl );
         }
     }

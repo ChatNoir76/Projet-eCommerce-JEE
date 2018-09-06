@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.afpa.ecom.controleur.service.ServSession;
 import fr.afpa.ecom.modele.Client;
-import fr.afpa.ecom.service.Service;
 
 public class ConnexionForm {
 
@@ -26,8 +26,8 @@ public class ConnexionForm {
     public Client connecterUtilisateur( HttpServletRequest request ) {
 
         /* Récupération des champs du formulaire */
-        String email = Service.getValeurChamp( request, CHAMP_EMAIL );
-        String motDePasse = Service.getValeurChamp( request, CHAMP_PASS );
+        String email = ServSession.getValeurChamp(  CHAMP_EMAIL );
+        String motDePasse = ServSession.getValeurChamp(  CHAMP_PASS );
         Client c = new Client();
 
         /* Validation du champ email. */

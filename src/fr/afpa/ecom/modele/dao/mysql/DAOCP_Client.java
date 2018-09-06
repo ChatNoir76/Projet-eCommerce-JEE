@@ -57,7 +57,7 @@ class DAOCP_Client extends DAOCP<Client> {
         int errcode;
         String errmsg;
         int id;
-
+        
         try {
             CallableStatement cs = con().prepareCall( _PSinsert );
             // IN
@@ -89,8 +89,9 @@ class DAOCP_Client extends DAOCP<Client> {
             // Traitement des informations (id+erreurs)
             switch ( errcode ) {
             case 0: // pas d'erreur : récupération de l'id
-                obj.set_id( id );
-                ServiceDAO.mdInformation( "Création du client n°" + id + " effectuée" );
+                Client fromBDD = getById( id );
+                obj.cloneClientFrom( fromBDD );
+                //ServiceDAO.mdInformation( "Création du client n°" + id + " effectuée" );
                 break;
             default:
                 throw new DaoException( errcode, errmsg );
@@ -135,7 +136,7 @@ class DAOCP_Client extends DAOCP<Client> {
             // Traitement des informations (id+erreurs)
             switch ( errcode ) {
             case 0: // pas d'erreur : récupération de l'id
-                ServiceDAO.mdInformation( "Client n°" + obj.get_id() + " mise à jour avec succès..." );
+                //ServiceDAO.mdInformation( "Client n°" + obj.get_id() + " mise à jour avec succès..." );
                 break;
             default:
                 throw new DaoException( errcode, errmsg );
@@ -167,7 +168,7 @@ class DAOCP_Client extends DAOCP<Client> {
             // Traitement des informations (id+erreurs)
             switch ( errcode ) {
             case 0: // pas d'erreur
-                ServiceDAO.mdInformation( "Client n°" + obj.get_id() + " à été supprimé de la base de données" );
+                //ServiceDAO.mdInformation( "Client n°" + obj.get_id() + " à été supprimé de la base de données" );
                 break;
             default:
                 throw new DaoException( errcode, errmsg );
@@ -176,7 +177,7 @@ class DAOCP_Client extends DAOCP<Client> {
             throw new DaoException( e.getErrorCode(), e.getMessage() );
         }
     }
-
+    
     @Override
     public Client getById( int id ) throws DaoException {
         Client c = null;

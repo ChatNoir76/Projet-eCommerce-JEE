@@ -1,4 +1,4 @@
-package fr.afpa.ecom.service;
+package fr.afpa.ecom.controleur.service;
 
 public class connexionException extends Exception {
     

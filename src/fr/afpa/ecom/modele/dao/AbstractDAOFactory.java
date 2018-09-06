@@ -8,6 +8,7 @@ import fr.afpa.ecom.modele.dao.mysql.DAO;
 import fr.afpa.ecom.modele.secondaire.Statut;
 import fr.afpa.ecom.modele.dao.mysql.DAOCP;
 import fr.afpa.ecom.modele.dao.mysql.DAOFactory;
+import fr.afpa.ecom.modele.dao.mysql.DAOPanier;
 
 /**
  * @author chatnoir
@@ -50,6 +51,8 @@ public abstract class AbstractDAOFactory {
 	 * @return la DAO de type Fournisseur
 	 */
 	public abstract DAOCP<Fournisseur> getFournisseur();
+	
+	public abstract DAOPanier getPanier(int idClient) throws DaoException;
 	
 	//SECONDAIRE
 	public abstract DAO<Statut> getStatut(EnumObject eo);

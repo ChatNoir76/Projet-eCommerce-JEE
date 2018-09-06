@@ -49,7 +49,7 @@ class DAOCP_Commande extends DAOCP<Commande> {
 			{
 			case 0: //pas d'erreur : récupération de l'id
 				obj.set_id(id);
-				ServiceDAO.mdInformation("Création de la commande n°" + id + " effectuée");
+				//ServiceDAO.mdInformation("Création de la commande n°" + id + " effectuée");
 				break;
 			default:
 				throw new DaoException(errcode,errmsg);
@@ -83,7 +83,7 @@ class DAOCP_Commande extends DAOCP<Commande> {
 			switch (errcode)
 			{
 			case 0: //pas d'erreur : récupération de l'id
-			    ServiceDAO.mdInformation("Commande n°" + obj.get_id() + " à été mise à jour");
+			    //ServiceDAO.mdInformation("Commande n°" + obj.get_id() + " à été mise à jour");
 				break;
 			default:
 				throw new DaoException(errcode,errmsg);
@@ -116,7 +116,7 @@ class DAOCP_Commande extends DAOCP<Commande> {
 			switch (errcode)
 			{
 			case 0: //pas d'erreur : récupération de l'id
-			    ServiceDAO.mdInformation("Commande n°" + obj.get_id() + " à été supprimé de la base de données");
+			    //ServiceDAO.mdInformation("Commande n°" + obj.get_id() + " à été supprimé de la base de données");
 				break;
 			default:
 				throw new DaoException(errcode,errmsg);

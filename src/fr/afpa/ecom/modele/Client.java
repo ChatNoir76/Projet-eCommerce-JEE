@@ -315,6 +315,24 @@ public class Client {
          */
     }
 
+    public void cloneClientFrom(Client maCopie)
+    {
+        _id = maCopie.get_id();
+        _dateInscription= maCopie.get_dateInscription();
+        _nom = maCopie.get_nom();
+        _prenom = maCopie.get_prenom();
+        _sexe = maCopie.get_sexe();
+        _mail = maCopie.get_mail();
+        _tel = maCopie.get_tel();
+        _dateNaissance = maCopie.get_dateNaissance();
+        _adresse = maCopie.get_adresse();
+        _codePostal = maCopie.get_codePostal();
+        _ville = maCopie.get_ville();
+        _pays = maCopie.get_pays();
+        _commentaire = maCopie.get_commentaire();
+        _motDePasse = maCopie.get_motDePasse();
+    }
+    
     @Override
     public String toString() {
         return "client n°" + _id + " (" + _nom + " - " + _prenom + ")";
