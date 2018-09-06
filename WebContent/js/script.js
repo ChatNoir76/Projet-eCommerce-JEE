@@ -5,7 +5,6 @@ function voirProduit(id)
 
 function ajoutPanier(id)
 {
-    alert("ajout panier produit n°" + id);
     document.location.href="/eCommerce/ajoutPanier?idProduit="+id;
 }
 

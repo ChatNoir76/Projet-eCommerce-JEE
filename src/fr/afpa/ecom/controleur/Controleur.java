@@ -11,11 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import fr.afpa.ecom.controleur.service.ServClient;
-import fr.afpa.ecom.controleur.service.ServProduit;
+import fr.afpa.ecom.controleur.service.ServPanier;
 import fr.afpa.ecom.controleur.service.ServSession;
-import fr.afpa.ecom.controleur.service.connexionException;
+import fr.afpa.ecom.controleur.service.ServiceException;
 import fr.afpa.ecom.modele.Client;
-import fr.afpa.ecom.modele.Commande;
 import fr.afpa.ecom.modele.Panier;
 import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.AbstractDAOFactory;
@@ -31,7 +30,8 @@ import fr.afpa.ecom.modele.dao.EnumDAO;
         "/listeClient",
         "/deconnexion",
         "/produit",
-        "/ajoutPanier" } )
+        "/ajoutPanier",
+        "/panier" } )
 public class Controleur extends HttpServlet {
     private static final long          serialVersionUID      = 1L;
     private static HttpServletRequest  _request;
@@ -43,6 +43,7 @@ public class Controleur extends HttpServlet {
     private static final String        VUE_CONNEXION         = "/WEB-INF/vue/connexion.jsp";
     private static final String        VUE_LISTECLIENT       = "/WEB-INF/vue/listeClient.jsp";
     private static final String        VUE_PRODUIT           = "/WEB-INF/vue/produit.jsp";
+    private static final String        VUE_PANIER            = "/WEB-INF/vue/panier.jsp";
 
     // HREF : Lien vers une autre page via getServletPath()
     private static final String        HREF_CONNEXION        = "/connexion";
@@ -51,6 +52,7 @@ public class Controleur extends HttpServlet {
     private static final String        HREF_LISTECLIENT      = "/listeClient";
     private static final String        HREF_PRODUIT          = "/produit";
     private static final String        HREF_AJOUTPANIER      = "/ajoutPanier";
+    private static final String        HREF_PANIER           = "/panier";
 
     // ATT : attribut de la variable de session
     public static final String         ATT_CLIENT            = "client";
@@ -125,7 +127,7 @@ public class Controleur extends HttpServlet {
 
     // INITIALISATION et Redirection
     private void initialize( HttpServletRequest req, HttpServletResponse resp )
-            throws DaoException, connexionException, IOException {
+            throws DaoException, ServiceException, IOException {
         // _request.getContextPath() => /eCommerce
         // _request.getServletPath() => /index
         // _request.getRequestURI() => /eCommerce/index?variable=valeur
@@ -134,6 +136,7 @@ public class Controleur extends HttpServlet {
 
         // activation ou récupération variables de session
         _session = _request.getSession();
+        _session.setAttribute( "erreur", null );
 
         // récupération variables de fonctionnement
         _VALATT_Client = ServSession.getSessionClient();
@@ -147,7 +150,7 @@ public class Controleur extends HttpServlet {
         _daoFact = AbstractDAOFactory.getFactory( EnumDAO.MySQL );
     }
 
-    private void redirection() throws DaoException, connexionException {
+    private void redirection() throws DaoException, ServiceException {
         // récupération de l'url appelée
         String nextPage = _request.getServletPath();
         // récupération de la page à afficher en fonction de l'url
@@ -163,6 +166,7 @@ public class Controleur extends HttpServlet {
             _NEXTVIEW = VUE_INDEX;
             ServSession.setSessionListProduit();
             break;
+      
         case HREF_LISTECLIENT:
             _NEXTVIEW = VUE_LISTECLIENT;
             ServSession.setSessionListClient();
@@ -173,7 +177,10 @@ public class Controleur extends HttpServlet {
             break;
         case HREF_AJOUTPANIER:
             _NEXTVIEW = null;
-            ajoutPanier();
+            panierAjouter();
+            break;
+        case HREF_PANIER:
+            _NEXTVIEW = VUE_PANIER;
             break;
         default:
             _NEXTVIEW = VUE_INDEX;
@@ -191,7 +198,7 @@ public class Controleur extends HttpServlet {
         }
 
     }
-    
+
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
@@ -202,10 +209,14 @@ public class Controleur extends HttpServlet {
         try {
             initialize( request, response );
             redirection();
+        } catch ( ServiceException e ) {
+            _session.setAttribute( "erreur", e.getMessage() );
+        } catch ( DaoException e ) {
+            _session.setAttribute( "erreur", e.getMessage() );
+        } finally {
             navigateTo( _NEXTVIEW );
-        } catch ( DaoException | connexionException e ) {
-            _request.setAttribute( "erreur", e.getMessage() );
         }
+
     }
 
     /**
@@ -219,27 +230,39 @@ public class Controleur extends HttpServlet {
             initialize( request, response );
             traitementFormulaires();
             redirection();
-        } catch ( connexionException e ) {
-            _request.setAttribute( "erreur", e.getMessage() );
+        } catch ( ServiceException e ) {
+            _session.setAttribute( "erreur", e.getMessage() );
         } catch ( DaoException e ) {
-            _request.setAttribute( "erreur", e.getMessage() );
+            _session.setAttribute( "erreur", e.getMessage() );
+        } finally {
+            navigateTo( VUE_INDEX );
         }
-        navigateTo( VUE_INDEX );
+
     }
 
     // METHODE ANNEXE
 
-    private void ajoutPanier() throws DaoException, connexionException {
+    private void panierAjouter() throws DaoException, ServiceException {
+        // récupération de l'id produit
         int idProduitToPanier = Integer.parseInt( ServSession.getValeurChamp( PARAM_IDPRODUIT ) );
-        if ( _VALATT_Client == null ) {
-            creationPanier();
-        } else {
 
+        // récupération ou création panier
+        if ( _VALATT_Client == null ) {
+            // creation commande-client
+            ServPanier.initialisationClientCommandePourPanier();
+            // mise à jour session
+            _VALATT_Client = ServSession.getSessionClient();
         }
 
+        // ajout du produit dans le panier
+        _daoFact.getPanier( _VALATT_Client.get_id() ).ajoutPanier( idProduitToPanier, 1 );
+
+        // ajout du panier à la session
+        Panier pp = _daoFact.getPanier( _VALATT_Client.get_id() ).getPanier();
+        ServSession.setSessionPanier( pp );
     }
 
-    private void traitementFormulaires() throws connexionException, DaoException {
+    private void traitementFormulaires() throws ServiceException, DaoException {
         switch ( _request.getParameter( _FORMULAIRE ) ) {
         case FORM_CLIENTCONNEXION:
             String mail = ServSession.getValeurChamp( CHAMP_EMAIL );
@@ -247,19 +270,6 @@ public class Controleur extends HttpServlet {
             ServClient.connexionClient( mail, mdp );
             break;
         }
-    }
-
-    private void creationPanier() throws DaoException, connexionException {
-        // Création et connexion du client
-        Client c = new Client();
-        _daoFact.getClient().insert( c );
-        ServClient.connexionClient( c.get_mail(), c.get_motDePasse() );
-        // Création de la commande
-        Commande com = new Commande( c.get_id() );
-        _daoFact.getCommande().insert( com );
-        // création du panier et enregistrement en session
-        Panier p = new Panier( com, c );
-
     }
 
 }

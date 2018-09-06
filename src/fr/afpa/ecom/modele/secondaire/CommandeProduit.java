@@ -2,6 +2,7 @@ package fr.afpa.ecom.modele.secondaire;
 
 public class CommandeProduit {
 
+    private int    _idproduit;
     private int    _quantite;
     private double _prix_HT;
     private float  _remise;
@@ -28,8 +29,14 @@ public class CommandeProduit {
         return _prix_TTC;
     }
 
-    public CommandeProduit( int quantite, double prix_HT, float remise, float tva, double prix_TTC ) {
+    public String toString()
+    {
+        return "article n°" + _idproduit + " qty(" + _quantite + ")";
+    }
+
+    public CommandeProduit( int idproduit, int quantite, double prix_HT, float remise, float tva, double prix_TTC ) {
         super();
+        this._idproduit = idproduit;
         this._quantite = quantite;
         this._prix_HT = prix_HT;
         this._remise = remise;

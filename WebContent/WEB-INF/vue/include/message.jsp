@@ -3,6 +3,7 @@
 <article id='message'>  
 	<aside>
 		<fieldset>
+		<c:out value="${ erreur }" />
 			<c:if test="${ !empty erreur }">
 				<p style="color: red;">
 					<c:out value="${ erreur }" />

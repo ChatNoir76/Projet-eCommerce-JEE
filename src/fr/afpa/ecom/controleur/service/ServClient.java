@@ -9,7 +9,7 @@ import fr.afpa.ecom.modele.dao.DaoException;
 public class ServClient {
 
     public static Client getClientFromList( String email, String mdp )
-            throws connexionException, DaoException {
+            throws ServiceException, DaoException {
         ArrayList<Client> maListe = Controleur.getDao().getClient().getAll();
 
         Client temp = null;
@@ -21,10 +21,10 @@ public class ServClient {
         }
 
         if ( temp == null ) {
-            throw new connexionException( "Combinaison email / mot de passe incorrecte..." );
+            throw new ServiceException( "Combinaison email / mot de passe incorrecte..." );
         }
         if ( !temp.get_motDePasse().equals( mdp ) ) {
-            throw new connexionException( "Combinaison email / mot de passe incorrecte..." );
+            throw new ServiceException( "Combinaison email / mot de passe incorrecte..." );
         }
         return temp;
     }
@@ -35,7 +35,7 @@ public class ServClient {
     }
 
     public static void connexionClient( String mail, String mdp )
-            throws connexionException, DaoException {
+            throws ServiceException, DaoException {
         Client c = null;
         c = getClientFromList( mail, mdp );
         if ( c != null ) {
@@ -43,7 +43,7 @@ public class ServClient {
             Controleur.getSession().setAttribute( Controleur.ATT_CLIENT_STT,
                     Controleur.getDao().getClient().getDernierStatut( c.get_id() ) );
         } else {
-            throw new connexionException( "Connexion impossible..." );
+            throw new ServiceException( "Connexion impossible..." );
         }
     }
 

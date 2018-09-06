@@ -6,24 +6,16 @@ import fr.afpa.ecom.modele.secondaire.CommandeProduit;
 
 public class Panier {
 
-    private Commande                   maCommande;
-    private Client                     monClient;
+    private int                        _idCommande;
+    private int                        _idClient;
     private ArrayList<CommandeProduit> articles;
-
-    public Commande getMaCommande() {
-        return maCommande;
-    }
-
-    public void setMaCommande( Commande maCommande ) {
-        this.maCommande = maCommande;
-    }
-
-    public Client getMonClient() {
-        return monClient;
-    }
-
-    public void setMonClient( Client monClient ) {
-        this.monClient = monClient;
+    
+    public int count() {
+        int nbcount = 0;
+        for ( CommandeProduit cp : articles ) {
+            nbcount += cp.get_quantite();
+        }
+        return nbcount;
     }
 
     public ArrayList<CommandeProduit> getArticles() {
@@ -34,15 +26,15 @@ public class Panier {
         this.articles = articles;
     }
 
-    public Panier( Commande maCommande, Client monClient, ArrayList<CommandeProduit> mesArticles ) {
-        this.maCommande = maCommande;
-        this.monClient = monClient;
+    public Panier( int idCommande, int idClient, ArrayList<CommandeProduit> mesArticles ) {
+        this._idCommande = idCommande;
+        this._idClient = idClient;
         this.articles = ( mesArticles == null ? new ArrayList<CommandeProduit>() : mesArticles );
     }
 
-    public Panier( Commande maCommande, Client monClient ) {
-        this.maCommande = maCommande;
-        this.monClient = monClient;
+    public Panier( int idCommande, int idClient ) {
+        this._idCommande = idCommande;
+        this._idClient = idClient;
         this.articles = new ArrayList<CommandeProduit>();
     }
 

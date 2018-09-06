@@ -85,7 +85,7 @@ public class ServSession {
     }
 
     public static void setSessionPanier( Panier p ) {
-        Controleur.getRequest().setAttribute( Controleur.ATT_LISTE_CLIENT, p );
+        Controleur.getSession().setAttribute( Controleur.ATT_PANIER, p );
     }
 
 }

@@ -1,9 +1,9 @@
 package fr.afpa.ecom.controleur.service;
 
-public class connexionException extends Exception {
+public class ServiceException extends Exception {
     
     private static final long serialVersionUID = 1L;
-    public connexionException( String message)
+    public ServiceException( String message)
     {
         super(message);
     }

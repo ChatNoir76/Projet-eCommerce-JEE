@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import fr.afpa.ecom.modele.Panier;
 import fr.afpa.ecom.modele.dao.DaoException;
-import fr.afpa.ecom.modele.dao.ServiceDAO;
 import fr.afpa.ecom.modele.secondaire.CommandeProduit;
 
 public class DAOPanier {
@@ -20,7 +20,7 @@ public class DAOPanier {
     private final static String        _PSdernierStatus          = "CALL ps_dernier_statut(?,?,?,?,?)";
     private final static String        _PSgetIdCommande          = "CALL ps_panier_getcommandefromclient(?,?,?,?)";
     private final static String        _PSgetListCommandeProduit = "CALL ps_panier_getlistcommandeproduit(?,?,?)";
-    private final static String        _PSSetCommandeProduit     = "CALL ps_panier_setCommandeProduit(?,?,?,?,?,?,?,?,?)";
+    private final static String        _PSAjoutPanier            = "CALL ps_panier_ajoutproduit(?,?,?,?,?)";
 
     private Connection                 _con                      = null;
     private int                        _idClient                 = -1;
@@ -40,6 +40,39 @@ public class DAOPanier {
         getCommandeProduit();
     }
 
+    // METHODES PUBLIQUES
+    public Panier getPanier() {
+        return new Panier( _idCommande, _idClient, _lcp );
+    }
+
+    public void ajoutPanier( int idProduit, int quantity ) throws DaoException {
+        int errcode;
+        String errmsg;
+        try {
+            CallableStatement cs = _con.prepareCall( _PSAjoutPanier );
+            // IN
+            cs.setInt( 1, _idCommande );
+            cs.setInt( 2, idProduit );
+            cs.setInt( 3, quantity );
+
+            // OUT
+            cs.registerOutParameter( 4, java.sql.Types.INTEGER );
+            cs.registerOutParameter( 5, java.sql.Types.VARCHAR );
+            cs.execute();
+
+            // Récupération des OUT
+            errcode = cs.getInt( 4 );
+            errmsg = cs.getString( 5 );
+
+            if ( errcode != 0 ) {
+                throw new DaoException( errcode, errmsg );
+            }
+        } catch ( SQLException e ) {
+            throw new DaoException( e.getErrorCode(), e.getMessage() );
+        }
+    }
+
+    // METHODES PRIVEES
     private void getStatusClient() throws DaoException {
         int errcode;
         String errmsg;
@@ -119,7 +152,7 @@ public class DAOPanier {
             errmsg = cs.getString( 3 );
 
             while ( rs.next() ) {
-                _lcp.add( new CommandeProduit( rs.getInt( 1 ), rs.getDouble( 2 ),
+                _lcp.add( new CommandeProduit( rs.getInt( 7 ), rs.getInt( 1 ), rs.getDouble( 2 ),
                         rs.getFloat( 3 ), rs.getFloat( 4 ), rs.getDouble( 5 ) ) );
             }
             rs.close();
@@ -129,16 +162,6 @@ public class DAOPanier {
         } catch ( SQLException e ) {
             throw new DaoException( e.getErrorCode(), e.getMessage() );
         }
-    }
-
-    // METHODES PUBLIQUES
-    public ArrayList<CommandeProduit> getPanier() {
-        return _lcp;
-    }
-
-    public void ajoutPanier( CommandeProduit cp ) {
-        // ps_commandeProduit_insertion
-        // puis rechargement list avec getCommandeProduit()
     }
 
 }
