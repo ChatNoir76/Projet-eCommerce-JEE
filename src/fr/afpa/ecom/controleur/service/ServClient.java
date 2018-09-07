@@ -34,17 +34,23 @@ public class ServClient {
         Controleur.getSession().setAttribute( Controleur.ATT_CLIENT_STT, null );
     }
 
-    public static void connexionClient( String mail, String mdp )
+    public static Client connexionClient( String mail, String mdp )
             throws ServiceException, DaoException {
         Client c = null;
         c = getClientFromList( mail, mdp );
         if ( c != null ) {
+            int idstatut = Controleur.getDao().getClient().getDernierStatut( c.get_id() );
+            if (idstatut >0)
+            {
             Controleur.getSession().setAttribute( Controleur.ATT_CLIENT, c );
-            Controleur.getSession().setAttribute( Controleur.ATT_CLIENT_STT,
-                    Controleur.getDao().getClient().getDernierStatut( c.get_id() ) );
+            Controleur.getSession().setAttribute( 
+                    Controleur.ATT_CLIENT_STT,
+                    idstatut );
+            }
         } else {
             throw new ServiceException( "Connexion impossible..." );
         }
+        return c;
     }
 
 }

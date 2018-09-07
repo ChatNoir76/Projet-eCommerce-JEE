@@ -74,7 +74,7 @@ body {
 // cadre blanc transparent de la page
 #cadreBlanc {
 	@include flex(column,
-	center);
+	center, center, wrap);
 	width: 95%;
 	height: 95%;
 	background-color: RGBa(150, 150, 150, 0.4);

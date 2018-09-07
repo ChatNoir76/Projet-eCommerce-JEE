@@ -32,7 +32,7 @@ class DAOCP_Produit extends DAOCP<Produit> {
 
             while ( rs.next() ) {
                 al.add( new Produit( rs.getInt( 1 ), rs.getString( 2 ), rs.getDouble( 3 ), rs.getInt( 4 ),
-                        rs.getInt( 5 ), rs.getInt( 6 ), rs.getFloat( 7 ) ) );
+                        rs.getInt( 5 ), rs.getInt( 6 ), rs.getFloat( 7 ),rs.getInt( 8 ) ) );
             }
 
             rs.close();
@@ -57,7 +57,7 @@ class DAOCP_Produit extends DAOCP<Produit> {
             cs.setInt( 4, obj.get_stockMin() );
             cs.setInt( 5, obj.get_stockObjectif() );
             cs.setFloat( 6, obj.get_tva() );
-            cs.setInt( 7, obj.get_typeProduit().get_id() );
+            cs.setInt( 7, obj.get_idTypeProduit() );
 
             // OUT
             cs.registerOutParameter( 8, java.sql.Types.INTEGER );
@@ -106,7 +106,7 @@ class DAOCP_Produit extends DAOCP<Produit> {
 
             if ( rs.first() ) {
                 p = new Produit( rs.getInt( 1 ), rs.getString( 2 ), rs.getDouble( 3 ), rs.getInt( 4 ),
-                        rs.getInt( 5 ), rs.getInt( 6 ), rs.getFloat( 7 ) );
+                        rs.getInt( 5 ), rs.getInt( 6 ), rs.getFloat( 7 ),rs.getInt( 8 ) );
             }
 
             rs.close();

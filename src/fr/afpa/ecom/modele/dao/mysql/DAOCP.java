@@ -93,7 +93,7 @@ public abstract class DAOCP<T> extends DAO<T>{
 	{
 		int errcode;
 		String errmsg;
-		int id;
+		int id = -1;
 		
 		try {
 			CallableStatement cs = con().prepareCall(_PSDerStatut);
@@ -122,14 +122,6 @@ public abstract class DAOCP<T> extends DAO<T>{
 			}
 		} catch (SQLException e) {
 			throw new DaoException(e.getErrorCode(),e.getMessage());
-			
-//			User does not have access to metadata required to determine stored procedure parameter types. If rights can not be granted, configure connection with "noAccessToProcedureBodies=true" to have driver generate parameters that represent INOUT strings irregardless of actual parameter types.
-//		    at fr.afpa.ecom.modele.dao.mysql.DAOCP.getDernierStatut(DAOCP.java:124)
-//		    at fr.afpa.ecom.service.Service.connexionClient(Service.java:79)
-//		    at fr.afpa.ecom.controleur.Controleur.traitementFormulaires(Controleur.java:157)
-//		    at fr.afpa.ecom.controleur.Controleur.initialize(Controleur.java:94)
-//		    at fr.afpa.ecom.controleur.Controleur.doGet(Controleur.java:125)
-//		    at fr.afpa.ecom.controleur.Controleur.doPost(Controleur.java:147)
 
 		}
 	}

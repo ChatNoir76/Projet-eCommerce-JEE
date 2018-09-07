@@ -16,4 +16,12 @@ public class ServPanier {
         Commande com = new Commande( c.get_id() );
         Controleur.getDao().getCommande().insert( com );
     }
+    
+    
+    
+    public static void removePanier()
+    {
+        Controleur.getSession().setAttribute( Controleur.ATT_PANIER, null );
+    }
+    
 }

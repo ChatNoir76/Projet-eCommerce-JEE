@@ -37,7 +37,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 95%;
   height: 95%;
   background-color: RGBa(150, 150, 150, 0.4);

@@ -28,10 +28,9 @@
 						<a class="navbar-brand" href="/eCommerce/connexion">Connexion</a>
 					</c:if>
 					<c:if
-						test="${!empty sessionScope.client && sessionScope.clientStatut >= 1}">
+						test="${!empty sessionScope.client}">
 						<a class="navbar-brand" href="/eCommerce/deconnexion">
-							Déconnexion(<span class="succes">${sessionScope.client.get_mail()}</span>
-							)
+							Déconnexion(<span class="succes">${sessionScope.client.get_mail()}</span>)
 						</a>
 					</c:if>
 				</div>

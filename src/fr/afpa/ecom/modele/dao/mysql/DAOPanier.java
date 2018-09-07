@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import fr.afpa.ecom.modele.Panier;
+import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.secondaire.CommandeProduit;
 
@@ -48,6 +49,10 @@ public class DAOPanier {
     public void ajoutPanier( int idProduit, int quantity ) throws DaoException {
         int errcode;
         String errmsg;
+        if (_idCommande == -1)
+        {
+            throw new DaoException( 99999, "le numéro de commande est corrompue" ); 
+        }
         try {
             CallableStatement cs = _con.prepareCall( _PSAjoutPanier );
             // IN
@@ -106,7 +111,6 @@ public class DAOPanier {
     private void getIdCommande() throws DaoException {
         int errcode;
         String errmsg;
-
         try {
             CallableStatement cs = _con.prepareCall( _PSgetIdCommande );
             // IN
@@ -124,7 +128,7 @@ public class DAOPanier {
             _idCommande = cs.getInt( 4 );
 
             // Traitement des informations (id+erreurs)
-            if ( errcode != 0 ) {
+            if ( errcode != 0 || _idCommande == -1 ) {
                 throw new DaoException( errcode, errmsg );
             }
         } catch ( SQLException e ) {
@@ -151,9 +155,12 @@ public class DAOPanier {
             errcode = cs.getInt( 2 );
             errmsg = cs.getString( 3 );
 
+            // quantite_produit, prix_HT_unitaire_debut, remise_appliquee, tva_appliquee, prix_TTC_unitaire_final, 
+            // id_produit, nom_produit, prixht_produit, stock_inventaire_produit, stock_minimum, stock_objectif, tva_produit, id_type_produit
+            
             while ( rs.next() ) {
-                _lcp.add( new CommandeProduit( rs.getInt( 7 ), rs.getInt( 1 ), rs.getDouble( 2 ),
-                        rs.getFloat( 3 ), rs.getFloat( 4 ), rs.getDouble( 5 ) ) );
+                Produit p = new Produit(rs.getInt( 6 ), rs.getString( 7 ),rs.getDouble( 8 ),rs.getInt( 9 ),rs.getInt( 10 ),rs.getInt( 11 ),rs.getFloat( 12 ),rs.getInt( 13 ));
+                _lcp.add( new CommandeProduit( rs.getInt( 1 ), rs.getDouble( 2 ),rs.getFloat( 3 ), rs.getFloat( 4 ), rs.getDouble( 5 ), p ) );
             }
             rs.close();
             if ( errcode != 0 ) {

@@ -3,6 +3,7 @@ package fr.afpa.ecom.controleur;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -62,6 +63,7 @@ public class Controleur extends HttpServlet {
     public static final String         ATT_LISTE_PRODUIT     = "listproduit";
     public static final String         ATT_PRODUIT           = "monproduit";
     public static final String         ATT_PANIER            = "panier";
+    public static final String         ATT_ERROR             = "errjsp";
 
     // VALATT : Variable récupérées de la session
     private Client                     _VALATT_Client        = null;
@@ -71,6 +73,7 @@ public class Controleur extends HttpServlet {
     private ArrayList<Produit>         _VALATT_Liste_Produit = null;
     private Produit                    _VALATT_Produit       = null;
     private Panier                     _VALATT_Panier        = null;
+    private ErrJsp                     _VALATT_Erreur        = null;
 
     // FORM : paramètre de formulaire via methode post (via traitement
     // formulaire())
@@ -88,6 +91,7 @@ public class Controleur extends HttpServlet {
     private static AbstractDAOFactory  _daoFact;
     // détermination de la prochaine vue
     private String                     _NEXTVIEW;
+    private boolean                    isError               = false;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -134,9 +138,7 @@ public class Controleur extends HttpServlet {
         _request = req;
         _response = resp;
 
-        // activation ou récupération variables de session
         _session = _request.getSession();
-        _session.setAttribute( "erreur", null );
 
         // récupération variables de fonctionnement
         _VALATT_Client = ServSession.getSessionClient();
@@ -145,6 +147,11 @@ public class Controleur extends HttpServlet {
         _VALATT_Liste_Client = ServSession.getSessionListClient();
         _VALATT_Liste_Produit = ServSession.getSessionListProduit();
         _VALATT_Produit = ServSession.getSessionProduit();
+        _VALATT_Panier = ServSession.getSessionPanier();
+        _VALATT_Erreur = ServSession.getSessionErreur();
+        
+        //remise à zéro des erreurs
+        generateErrorToJSP( -1, null, null );
 
         // initialisation des dao
         _daoFact = AbstractDAOFactory.getFactory( EnumDAO.MySQL );
@@ -161,12 +168,12 @@ public class Controleur extends HttpServlet {
         case HREF_DECONNEXION:
             _NEXTVIEW = null;
             ServClient.deconnexionClient();
+            ServPanier.removePanier();
             break;
         case HREF_INDEX:
             _NEXTVIEW = VUE_INDEX;
             ServSession.setSessionListProduit();
             break;
-      
         case HREF_LISTECLIENT:
             _NEXTVIEW = VUE_LISTECLIENT;
             ServSession.setSessionListClient();
@@ -188,13 +195,20 @@ public class Controleur extends HttpServlet {
     }
 
     private void navigateTo( String maVue ) throws ServletException, IOException {
-        if ( maVue == null ) {
-            _session.setAttribute( ATT_LASTPAGE, VUE_INDEX );
-            _response.sendRedirect( getRedirectionIndex() );
+        _response.getWriter().append( "navigateTo : " + maVue + " - error? : " + isError );
+        if ( !isError ) {
+            if ( maVue == null ) {
+                _response.sendRedirect( getRedirectionIndex() );
+            } else {
+                this.getServletContext().getRequestDispatcher( maVue ).forward( _request, _response );
+            }
         } else {
-            _session.setAttribute( ATT_LASTPAGE, maVue );
-            this.getServletContext().getRequestDispatcher( maVue ).forward( _request, _response );
-
+            // en cas d'erreur
+            if ( _NEXTVIEW == null ) {
+                this.getServletContext().getRequestDispatcher( VUE_INDEX ).forward( _request, _response );
+            } else {
+                this.getServletContext().getRequestDispatcher( _NEXTVIEW ).forward( _request, _response );
+            }
         }
 
     }
@@ -210,13 +224,12 @@ public class Controleur extends HttpServlet {
             initialize( request, response );
             redirection();
         } catch ( ServiceException e ) {
-            _session.setAttribute( "erreur", e.getMessage() );
+            generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } catch ( DaoException e ) {
-            _session.setAttribute( "erreur", e.getMessage() );
+            generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
         } finally {
             navigateTo( _NEXTVIEW );
         }
-
     }
 
     /**
@@ -231,11 +244,11 @@ public class Controleur extends HttpServlet {
             traitementFormulaires();
             redirection();
         } catch ( ServiceException e ) {
-            _session.setAttribute( "erreur", e.getMessage() );
+            generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } catch ( DaoException e ) {
-            _session.setAttribute( "erreur", e.getMessage() );
+            generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
         } finally {
-            navigateTo( VUE_INDEX );
+            navigateTo( null );
         }
 
     }
@@ -246,20 +259,19 @@ public class Controleur extends HttpServlet {
         // récupération de l'id produit
         int idProduitToPanier = Integer.parseInt( ServSession.getValeurChamp( PARAM_IDPRODUIT ) );
 
-        // récupération ou création panier
+        // création panier si non loggé
         if ( _VALATT_Client == null ) {
             // creation commande-client
             ServPanier.initialisationClientCommandePourPanier();
             // mise à jour session
             _VALATT_Client = ServSession.getSessionClient();
         }
-
         // ajout du produit dans le panier
         _daoFact.getPanier( _VALATT_Client.get_id() ).ajoutPanier( idProduitToPanier, 1 );
 
         // ajout du panier à la session
-        Panier pp = _daoFact.getPanier( _VALATT_Client.get_id() ).getPanier();
-        ServSession.setSessionPanier( pp );
+        Panier p = _daoFact.getPanier( _VALATT_Client.get_id() ).getPanier();
+        ServSession.setSessionPanier( p );
     }
 
     private void traitementFormulaires() throws ServiceException, DaoException {
@@ -267,9 +279,30 @@ public class Controleur extends HttpServlet {
         case FORM_CLIENTCONNEXION:
             String mail = ServSession.getValeurChamp( CHAMP_EMAIL );
             String mdp = ServSession.getValeurChamp( CHAMP_PASS );
-            ServClient.connexionClient( mail, mdp );
-            break;
+            
+            Client log = ServClient.connexionClient( mail, mdp );
+            Panier p = _daoFact.getPanier( log.get_id() ).getPanier();
+            
+            if (_VALATT_Client != null)
+            {
+                p.fusionnerPanier( _VALATT_Panier );
+            }
+            
+            ServSession.setSessionPanier( p );
+
         }
+    }
+
+    private void generateErrorToJSP( int errcode, String errtype, String errmsg ) {
+        isError = ( errcode == -1 ? false : true );
+        if ( isError ) {
+            ErrJsp er = new ErrJsp( errcode, errtype, errmsg );
+            _session.setAttribute( ATT_ERROR, er );
+        } else {
+            _session.setAttribute( ATT_ERROR, null );
+
+        }
+
     }
 
 }

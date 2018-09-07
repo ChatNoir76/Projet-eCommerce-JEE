@@ -1,11 +1,5 @@
 package fr.afpa.ecom.modele;
 
-import java.util.ArrayList;
-
-import fr.afpa.ecom.modele.secondaire.GenreProduit;
-import fr.afpa.ecom.modele.secondaire.TypeInfoAnnexe;
-import fr.afpa.ecom.modele.secondaire.TypeProduit;
-
 /**
  * @author chatnoir
  * <p>Classe métier</p>
@@ -21,9 +15,7 @@ public class Produit {
 	private int _stockMin;
 	private int _stockObjectif;
 	private float _tva; 
-	private TypeProduit _typeProduit;
-	private ArrayList<GenreProduit> _listGenreProduit;
-	private ArrayList<TypeInfoAnnexe> _listInfoAnnexe;
+	private int _idTypeProduit;
 	
 	/**
 	 * @return l'id du produit
@@ -111,45 +103,15 @@ public class Produit {
 	public void set_tva(float _tva) {
 		this._tva = _tva;
 	}
-	/**
-	 * @return l'objet typeProduit liée au produit
-	 */
-	public TypeProduit get_typeProduit() {
-		return _typeProduit;
-	}
-	/**
-	 * @param _typeProduit
-	 */
-	public void set_typeProduit(TypeProduit _typeProduit) {
-		this._typeProduit = _typeProduit;
-	}
-	/**
-	 * @return la liste d'objet GenreProduit liée au produit
-	 */
-	public ArrayList<GenreProduit> get_ListGenreProduit() {
-		return _listGenreProduit;
-	}
-	/**
-	 * @param _ListGenreProduit
-	 */
-	public void set_ListGenreProduit(ArrayList<GenreProduit> _listGenreProduit) {
-		this._listGenreProduit = _listGenreProduit;
-	}
-	/**
-	 * @return la liste des infos annexes liée au produit
-	 */
-	public ArrayList<TypeInfoAnnexe> get_listInfoAnnexe() {
-		return _listInfoAnnexe;
-	}
-	/**
-	 * @param _listInfoAnnexe
-	 */
-	public void set_listInfoAnnexe(ArrayList<TypeInfoAnnexe> _listInfoAnnexe) {
-		this._listInfoAnnexe = _listInfoAnnexe;
-	}
-	
 
-	//CONSTRUCTEUR
+	public int get_idTypeProduit() {
+        return _idTypeProduit;
+    }
+    public void set_idTypeProduit( int _idTypeProduit ) {
+        this._idTypeProduit = _idTypeProduit;
+    }
+    
+    //CONSTRUCTEUR
 	public Produit()
 	{
         _id=-1; 
@@ -158,7 +120,8 @@ public class Produit {
         _stockInventaire=0; 
         _stockMin=0;
         _stockObjectif=0;
-        _tva=0; 
+        _tva=0;
+        _idTypeProduit = -1;
 	}
 	
 	/**
@@ -173,7 +136,7 @@ public class Produit {
 	 */
 	public Produit(	int id_produit, String nom_produit,double prixht_produit, 
 					int stock_inventaire_produit, int stock_minimum, 
-					int stock_objectif,float tva_produit)
+					int stock_objectif,float tva_produit, int idTypeProduit)
 	{
 		_id=id_produit; 
 		_nomProduit=nom_produit;
@@ -182,7 +145,7 @@ public class Produit {
 		_stockMin=stock_minimum;
 		_stockObjectif=stock_objectif;
 		_tva=tva_produit; 
-		//_typeProduit=type_produit;
+		_idTypeProduit=idTypeProduit;
 	}
 	
 	/**
@@ -196,7 +159,7 @@ public class Produit {
 	 */
 	public Produit(String nom_produit,double prixht_produit, 
 			int stock_inventaire_produit, int stock_minimum, 
-			int stock_objectif,float tva_produit)
+			int stock_objectif,float tva_produit, int idTypeProduit)
 	{
 		_id=-1; 
 		_nomProduit=nom_produit;
@@ -205,7 +168,7 @@ public class Produit {
 		_stockMin=stock_minimum;
 		_stockObjectif=stock_objectif;
 		_tva=tva_produit; 
-		//_typeProduit=type_produit;
+		_idTypeProduit=idTypeProduit;;
 	}
 	
 	@Override

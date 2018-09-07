@@ -17,6 +17,16 @@ public class Panier {
         }
         return nbcount;
     }
+    
+    public double getSommeAPayer()
+    {
+        double apayer = 0;
+        for ( CommandeProduit cp : articles ) {
+            apayer += (cp.get_prix_TTC() * cp.get_quantite());
+        }
+
+        return Math.floor( apayer * 100 )/100;
+    }
 
     public ArrayList<CommandeProduit> getArticles() {
         return articles;
@@ -36,6 +46,17 @@ public class Panier {
         this._idCommande = idCommande;
         this._idClient = idClient;
         this.articles = new ArrayList<CommandeProduit>();
+    }
+    
+    public void fusionnerPanier(Panier p)
+    {
+        if (p != null)
+        {
+            for (CommandeProduit cp : p.getArticles())
+            {
+                articles.add( cp );
+            }
+        }
     }
 
 }

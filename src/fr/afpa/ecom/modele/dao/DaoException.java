@@ -29,7 +29,7 @@ public class DaoException extends Exception {
 	
 	public DaoException(String message) {
 		super(message);
-		_errCode = 62000;
+		_errCode = 99999;
 	}
 
 }

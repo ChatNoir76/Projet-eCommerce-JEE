@@ -3,6 +3,7 @@ package fr.afpa.ecom.controleur.service;
 import java.util.ArrayList;
 
 import fr.afpa.ecom.controleur.Controleur;
+import fr.afpa.ecom.controleur.ErrJsp;
 import fr.afpa.ecom.modele.Client;
 import fr.afpa.ecom.modele.Panier;
 import fr.afpa.ecom.modele.Produit;
@@ -42,6 +43,12 @@ public class ServSession {
         return Controleur.getSession().getAttribute( Controleur.ATT_PRODUIT ) == null
                 ? null
                 : (Produit) Controleur.getSession().getAttribute( Controleur.ATT_PRODUIT );
+    }
+
+    public static ErrJsp getSessionErreur() {
+        return Controleur.getSession().getAttribute( Controleur.ATT_ERROR ) == null
+                ? null
+                : (ErrJsp) Controleur.getSession().getAttribute( Controleur.ATT_ERROR );
     }
 
     public static int getSessionInt( String attribut ) {
