@@ -19,12 +19,12 @@
 						<div class="form-group form_ligne">
 							<label class="form_label" for="email">Adresse email</label> 
 							<input class="form_input" type="text" id="email" name="email" value="" maxlength="60" required/>
-							<span class="form_requis">*</span><br /> 
+							<span class="text-danger">*</span><br /> 
 						</div>
 						<div class="form-group form_ligne">
 							<label class="form_label" for="motdepasse">Mot de passe</label> 
 							<input class="form_input" type="password" id="motdepasse" name="motdepasse" value="" maxlength="20" required/>
-							<span class="form_requis">*</span><br /> 
+							<span class="text-danger">*</span><br /> 
 						</div>
 							<input type="submit" value="Connexion" class="btn btn-dark form_submit" />
 							<input type="hidden" id="formulaire" name="formulaire" value="form_clientconnexion">

@@ -48,15 +48,5 @@ public class Panier {
         this.articles = new ArrayList<CommandeProduit>();
     }
     
-    public void fusionnerPanier(Panier p)
-    {
-        if (p != null)
-        {
-            for (CommandeProduit cp : p.getArticles())
-            {
-                articles.add( cp );
-            }
-        }
-    }
 
 }

@@ -21,6 +21,7 @@ import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.AbstractDAOFactory;
 import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.dao.EnumDAO;
+import fr.afpa.ecom.modele.secondaire.CommandeProduit;
 
 /**
  * Servlet implementation class Index
@@ -33,7 +34,7 @@ import fr.afpa.ecom.modele.dao.EnumDAO;
         "/produit",
         "/ajoutPanier",
         "/panier",
-        "/inscription"} )
+        "/inscription" } )
 public class Controleur extends HttpServlet {
     private static final long          serialVersionUID       = 1L;
     private static HttpServletRequest  _request;
@@ -46,6 +47,7 @@ public class Controleur extends HttpServlet {
     private static final String        VUE_LISTECLIENT        = "/WEB-INF/vue/listeClient.jsp";
     private static final String        VUE_PRODUIT            = "/WEB-INF/vue/produit.jsp";
     private static final String        VUE_PANIER             = "/WEB-INF/vue/panier.jsp";
+    private static final String        VUE_INSCRIPTION        = "/WEB-INF/vue/inscription.jsp";
 
     // HREF : Lien vers une autre page via getServletPath()
     private static final String        HREF_CONNEXION         = "/connexion";
@@ -55,6 +57,7 @@ public class Controleur extends HttpServlet {
     private static final String        HREF_PRODUIT           = "/produit";
     private static final String        HREF_AJOUTPANIER       = "/ajoutPanier";
     private static final String        HREF_PANIER            = "/panier";
+    private static final String        HREF_INSCRIPTION       = "/inscription";
 
     // ATT : attribut de la variable de session
     public static final String         ATT_CLIENT             = "client";
@@ -85,6 +88,18 @@ public class Controleur extends HttpServlet {
     // CHAMP : paramètre venant d'un formulaire
     private static final String        CHAMP_EMAIL            = "email";
     private static final String        CHAMP_PASS             = "motdepasse";
+    private static final String        CHAMP2_ADDRESSE        = "inputAddress";
+    private static final String        CHAMP2_NOM             = "inputNom";
+    private static final String        CHAMP2_PRENOM          = "inputPrenom";
+    private static final String        CHAMP2_SEXE            = "inputSexe";
+    private static final String        CHAMP2_MAIL            = "inputEmail";
+    private static final String        CHAMP2_PWD             = "inputPassword";
+    private static final String        CHAMP2_TEL             = "inputTel";
+    private static final String        CHAMP2_NAISSANCE       = "inputNaissance";
+    private static final String        CHAMP2_VILLE           = "inputCity";
+    private static final String        CHAMP2_CODEPOSTAL      = "inputCP";
+    private static final String        CHAMP2_PAYS            = "inputPays";
+    private static final String        CHAMP2_COMMENTAIRE     = "Textarea";
 
     // PARAM : Paramètre de l'url en méthode get
     public static final String         PARAM_IDPRODUIT        = "idProduit";
@@ -191,8 +206,12 @@ public class Controleur extends HttpServlet {
         case HREF_PANIER:
             _NEXTVIEW = VUE_PANIER;
             break;
+        case HREF_INSCRIPTION:
+            _NEXTVIEW = VUE_INSCRIPTION;
+            break;
         default:
             _NEXTVIEW = VUE_INDEX;
+            generateErrorToJSP( 0, "fr.afpa.ecom.controleur", "erreur lors du chargement de la page " + nextPage );
         }
     }
 
@@ -281,19 +300,34 @@ public class Controleur extends HttpServlet {
         case FORM_CLIENTCONNEXION:
             String mail = ServSession.getValeurChamp( CHAMP_EMAIL );
             String mdp = ServSession.getValeurChamp( CHAMP_PASS );
-
             Client log = ServClient.connexionClient( mail, mdp );
-            Panier p = _daoFact.getPanier( log.get_id() ).getPanier();
-
             if ( _VALATT_Client != null ) {
-                p.fusionnerPanier( _VALATT_Panier );
+                for ( CommandeProduit cp : _VALATT_Panier.getArticles() ) {
+                    _daoFact.getPanier( log.get_id() ).ajoutPanier( cp.get_produit().get_id(), cp.get_quantite() );
+
+                }
             }
+
+            Panier p = _daoFact.getPanier( log.get_id() ).getPanier();
             ServSession.setSessionPanier( p );
             break;
-            
+
         case FORM_CLIENTINSCRIPTION:
-            
-            
+
+            String email = ServSession.getValeurChamp( CHAMP_EMAIL );
+            // inputNom
+            // inputPrenom
+            // inputSexe
+            // inputEmail
+            // inputPassword
+            // inputTel
+            // inputNaissance
+            // inputAddress
+            // inputCity
+            // inputCP
+            // inputPays
+            // Textarea
+
             break;
         }
     }

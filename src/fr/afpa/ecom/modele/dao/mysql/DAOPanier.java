@@ -77,6 +77,11 @@ public class DAOPanier {
         }
     }
 
+    public void DeleteAndRewritePanier(Panier p)
+    {
+        
+    }
+    
     // METHODES PRIVEES
     private void getStatusClient() throws DaoException {
         int errcode;
