@@ -26,8 +26,13 @@
 							<input class="form_input" type="password" id="motdepasse" name="motdepasse" value="" maxlength="20" required/>
 							<span class="form_requis">*</span><br /> 
 						</div>
-						<input type="submit" value="Connexion" class="btn btn-primary form_submit" />
-						<input type="hidden" id="formulaire" name="formulaire" value="form_clientconnexion">
+							<input type="submit" value="Connexion" class="btn btn-dark form_submit" />
+							<input type="hidden" id="formulaire" name="formulaire" value="form_clientconnexion">
+						<div>
+						</div>
+						<div>
+							<a href="/eCommerce/inscription">créer un compte</a>
+						</div>
 					</fieldset>
 
 				</form>

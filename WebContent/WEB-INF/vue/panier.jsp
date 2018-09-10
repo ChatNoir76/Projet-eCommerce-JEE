@@ -10,18 +10,42 @@
 	<section id='contenu' class='contenu'>
 		<section id='cadreBlanc' class='cadreBlanc'>
 			<p>ceci est le test du listing du paniers</p>
-			<ul class="list-group">
-				<c:forEach var="lc" items="${ panier.articles }">
-					  <li class="list-group-item d-flex justify-content-between align-items-center">
-					    <c:out value="${ lc.get_produit().get_nomProduit() }" />
-					    <span class="badge badge-secondary badge-pill">Soit TTC : <c:out value="${ lc.get_prix_TTC() * lc.get_quantite()}" /></span>
-						<span class="badge badge-secondary badge-pill">TVA : <c:out value="${ lc.get_tva() *100 }" /></span>
-						<span class="badge badge-secondary badge-pill">remise : <c:out value="${ lc.get_remise()*100 }" /></span>
-						<span class="badge badge-secondary badge-pill">Quantité : <c:out value="${ lc.get_quantite() }" /></span>
-						<span class="badge badge-primary badge-pill">Prix HT : <c:out value="${ lc.get_produit().get_prixHT() }" /></span>
+			<table class="table table-dark" style="width:90%;opacity:0.75;filter: alpha(opacity=75);">
+			  <thead>
+			    <tr>
+			      <th scope="col"><span ><c:out value="Nom Produit" /></span></th>
+			      <th scope="col"><span >Prix HT</span></th>
+			      <th scope="col"><span class="badge badge-secondary badge-pill">Quantité</span></th>
+			      <th scope="col"><span >remise</span></th>
+			      <th scope="col"><span >TVA</span></th>
+			      <th scope="col"><span >Soit TTC</span></th>
+			    </tr>
+			  </thead>
+			  <tbody>
+  				<c:forEach var="lc" items="${ panier.articles }">
+					 <tr>
+					    <td><span ><c:out value="${ lc.get_produit().get_nomProduit() }" /></span></td>
+						<td><span ><fmt:formatNumber type = "number" minFractionDigits = "2" value = "${ lc.get_produit().get_prixHT() }"/></span></td>
+						<td><span class="badge badge-secondary badge-pill"><c:out value="${ lc.get_quantite() }" /></span></td>
+						<td><span ><fmt:formatNumber type = "number" minFractionDigits = "2" value = "${ lc.get_remise()*100 }"/></span></td>
+						<td><span ><fmt:formatNumber type = "number" minFractionDigits = "2" value = "${ lc.get_tva() *100 }"/></span></td>
+						<td><span ><fmt:formatNumber type = "number" minFractionDigits = "2" value = "${ lc.get_prix_TTC() }"/></span></td>
+					</tr>
 				</c:forEach>
-			</ul>
-			Total Panier : <c:out value="${ panier.getSommeAPayer() }" />
+			    <tr>
+			      <td></td>
+			      <td></td>
+			      <td></td>
+			      <td></td>
+			      <td><strong><span class="text-primary">Total Panier</span></strong></td>
+			      <td>
+			      	<strong><span class="text-primary">
+						<fmt:formatNumber type = "number" minFractionDigits = "2" value = "${ panier.getSommeAPayer() }"/>
+					</span></strong>
+			      </td>
+			    </tr>
+			  </tbody>
+			</table>
 		</section>
 	</section>
 </body>

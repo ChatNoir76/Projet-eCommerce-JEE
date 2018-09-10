@@ -22,10 +22,10 @@ public class Panier {
     {
         double apayer = 0;
         for ( CommandeProduit cp : articles ) {
-            apayer += (cp.get_prix_TTC() * cp.get_quantite());
+            apayer += (cp.get_prix_TTC_unitaire() * cp.get_quantite());
         }
 
-        return Math.floor( apayer * 100 )/100;
+        return apayer;
     }
 
     public ArrayList<CommandeProduit> getArticles() {

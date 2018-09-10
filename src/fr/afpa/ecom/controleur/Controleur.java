@@ -32,66 +32,68 @@ import fr.afpa.ecom.modele.dao.EnumDAO;
         "/deconnexion",
         "/produit",
         "/ajoutPanier",
-        "/panier" } )
+        "/panier",
+        "/inscription"} )
 public class Controleur extends HttpServlet {
-    private static final long          serialVersionUID      = 1L;
+    private static final long          serialVersionUID       = 1L;
     private static HttpServletRequest  _request;
     private static HttpServletResponse _response;
     private static HttpSession         _session;
 
     // VUE : redirection vers la vue (req,resp)
-    private static final String        VUE_INDEX             = "/WEB-INF/vue/index.jsp";
-    private static final String        VUE_CONNEXION         = "/WEB-INF/vue/connexion.jsp";
-    private static final String        VUE_LISTECLIENT       = "/WEB-INF/vue/listeClient.jsp";
-    private static final String        VUE_PRODUIT           = "/WEB-INF/vue/produit.jsp";
-    private static final String        VUE_PANIER            = "/WEB-INF/vue/panier.jsp";
+    private static final String        VUE_INDEX              = "/WEB-INF/vue/index.jsp";
+    private static final String        VUE_CONNEXION          = "/WEB-INF/vue/connexion.jsp";
+    private static final String        VUE_LISTECLIENT        = "/WEB-INF/vue/listeClient.jsp";
+    private static final String        VUE_PRODUIT            = "/WEB-INF/vue/produit.jsp";
+    private static final String        VUE_PANIER             = "/WEB-INF/vue/panier.jsp";
 
     // HREF : Lien vers une autre page via getServletPath()
-    private static final String        HREF_CONNEXION        = "/connexion";
-    private static final String        HREF_DECONNEXION      = "/deconnexion";
-    private static final String        HREF_INDEX            = "/index";
-    private static final String        HREF_LISTECLIENT      = "/listeClient";
-    private static final String        HREF_PRODUIT          = "/produit";
-    private static final String        HREF_AJOUTPANIER      = "/ajoutPanier";
-    private static final String        HREF_PANIER           = "/panier";
+    private static final String        HREF_CONNEXION         = "/connexion";
+    private static final String        HREF_DECONNEXION       = "/deconnexion";
+    private static final String        HREF_INDEX             = "/index";
+    private static final String        HREF_LISTECLIENT       = "/listeClient";
+    private static final String        HREF_PRODUIT           = "/produit";
+    private static final String        HREF_AJOUTPANIER       = "/ajoutPanier";
+    private static final String        HREF_PANIER            = "/panier";
 
     // ATT : attribut de la variable de session
-    public static final String         ATT_CLIENT            = "client";
-    public static final String         ATT_CLIENT_STT        = "clientStatut";
-    public static final String         ATT_LASTPAGE          = "page";
-    public static final String         ATT_LISTE_CLIENT      = "listclient";
-    public static final String         ATT_LISTE_PRODUIT     = "listproduit";
-    public static final String         ATT_PRODUIT           = "monproduit";
-    public static final String         ATT_PANIER            = "panier";
-    public static final String         ATT_ERROR             = "errjsp";
+    public static final String         ATT_CLIENT             = "client";
+    public static final String         ATT_CLIENT_STT         = "clientStatut";
+    public static final String         ATT_LASTPAGE           = "page";
+    public static final String         ATT_LISTE_CLIENT       = "listclient";
+    public static final String         ATT_LISTE_PRODUIT      = "listproduit";
+    public static final String         ATT_PRODUIT            = "monproduit";
+    public static final String         ATT_PANIER             = "panier";
+    public static final String         ATT_ERROR              = "errjsp";
 
     // VALATT : Variable récupérées de la session
-    private Client                     _VALATT_Client        = null;
-    private int                        _VALATT_Client_STT    = -1;
-    private String                     _VALATT_lastPage      = null;
-    private ArrayList<Client>          _VALATT_Liste_Client  = null;
-    private ArrayList<Produit>         _VALATT_Liste_Produit = null;
-    private Produit                    _VALATT_Produit       = null;
-    private Panier                     _VALATT_Panier        = null;
-    private ErrJsp                     _VALATT_Erreur        = null;
+    private Client                     _VALATT_Client         = null;
+    private int                        _VALATT_Client_STT     = -1;
+    private String                     _VALATT_lastPage       = null;
+    private ArrayList<Client>          _VALATT_Liste_Client   = null;
+    private ArrayList<Produit>         _VALATT_Liste_Produit  = null;
+    private Produit                    _VALATT_Produit        = null;
+    private Panier                     _VALATT_Panier         = null;
+    private ErrJsp                     _VALATT_Erreur         = null;
 
     // FORM : paramètre de formulaire via methode post (via traitement
     // formulaire())
-    private static final String        _FORMULAIRE           = "formulaire";
-    private static final String        FORM_CLIENTCONNEXION  = "form_clientconnexion";
+    private static final String        _FORMULAIRE            = "formulaire";
+    private static final String        FORM_CLIENTCONNEXION   = "form_clientconnexion";
+    private static final String        FORM_CLIENTINSCRIPTION = "form_clientinscription";
 
     // CHAMP : paramètre venant d'un formulaire
-    private static final String        CHAMP_EMAIL           = "email";
-    private static final String        CHAMP_PASS            = "motdepasse";
+    private static final String        CHAMP_EMAIL            = "email";
+    private static final String        CHAMP_PASS             = "motdepasse";
 
     // PARAM : Paramètre de l'url en méthode get
-    public static final String         PARAM_IDPRODUIT       = "idProduit";
+    public static final String         PARAM_IDPRODUIT        = "idProduit";
 
     // Initialisation de la factory
     private static AbstractDAOFactory  _daoFact;
     // détermination de la prochaine vue
     private String                     _NEXTVIEW;
-    private boolean                    isError               = false;
+    private boolean                    isError                = false;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -149,8 +151,8 @@ public class Controleur extends HttpServlet {
         _VALATT_Produit = ServSession.getSessionProduit();
         _VALATT_Panier = ServSession.getSessionPanier();
         _VALATT_Erreur = ServSession.getSessionErreur();
-        
-        //remise à zéro des erreurs
+
+        // remise à zéro des erreurs
         generateErrorToJSP( -1, null, null );
 
         // initialisation des dao
@@ -279,17 +281,20 @@ public class Controleur extends HttpServlet {
         case FORM_CLIENTCONNEXION:
             String mail = ServSession.getValeurChamp( CHAMP_EMAIL );
             String mdp = ServSession.getValeurChamp( CHAMP_PASS );
-            
+
             Client log = ServClient.connexionClient( mail, mdp );
             Panier p = _daoFact.getPanier( log.get_id() ).getPanier();
-            
-            if (_VALATT_Client != null)
-            {
+
+            if ( _VALATT_Client != null ) {
                 p.fusionnerPanier( _VALATT_Panier );
             }
-            
             ServSession.setSessionPanier( p );
-
+            break;
+            
+        case FORM_CLIENTINSCRIPTION:
+            
+            
+            break;
         }
     }
 

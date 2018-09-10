@@ -16,19 +16,23 @@ public class CommandeProduit {
     }
 
     public double get_prix_HT() {
-        return Math.floor( _prix_HT * 100 )/100;
+        return _prix_HT;
     }
 
     public double get_remise() {
-        return Math.floor( _remise * 100 )/100;
+        return _remise;
     }
 
     public double get_tva() {
-        return Math.floor( _tva * 100 )/100;
+        return _tva;
     }
 
+    public double get_prix_TTC_unitaire() {
+        return _prix_TTC;
+    }
+    
     public double get_prix_TTC() {
-        return Math.floor( _prix_TTC * 100 )/100;
+        return _prix_TTC * _quantite;
     }
 
     public String toString()
