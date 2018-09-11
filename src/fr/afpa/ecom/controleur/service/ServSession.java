@@ -1,5 +1,6 @@
 package fr.afpa.ecom.controleur.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import fr.afpa.ecom.controleur.Controleur;
@@ -27,6 +28,12 @@ public class ServSession {
         }
     }
 
+    public static LocalDateTime getChampDate( String nomChampDate )
+    {
+        LocalDateTime valeur = LocalDateTime.parse( Controleur.getRequest().getParameter( nomChampDate ));
+            return valeur;
+    }
+    
     public static String getSessionString( String attribut ) {
         return Controleur.getSession().getAttribute( attribut ) == null
                 ? null

@@ -13,7 +13,7 @@ import fr.afpa.ecom.modele.dao.ServiceDAO;
 
 class DAOCP_Client extends DAOCP<Client> {
 
-    private final String _PSinsert = "CALL ps_client_insertion(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private final String _PSinsert = "CALL ps_client_insertion(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private final String _PSupdate = "CALL ps_client_update(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private final String _PSdelete = "CALL ps_client_delete(?,?,?)";
 
@@ -61,30 +61,29 @@ class DAOCP_Client extends DAOCP<Client> {
         try {
             CallableStatement cs = con().prepareCall( _PSinsert );
             // IN
-            cs.setDate( 1, ServiceDAO.setDateTime( obj.get_dateInscription() ) );
-            cs.setString( 2, obj.get_nom() );
-            cs.setString( 3, obj.get_prenom() );
-            cs.setString( 4, obj.get_sexeToString() );
-            cs.setString( 5, obj.get_mail() );
-            cs.setString( 6, obj.get_tel() );
-            cs.setDate( 7, ServiceDAO.setDateTime( obj.get_dateNaissance() ) );
-            cs.setString( 8, obj.get_adresse() );
-            cs.setString( 9, obj.get_codePostal() );
-            cs.setString( 10, obj.get_ville() );
-            cs.setString( 11, obj.get_pays() );
-            cs.setString( 12, obj.get_commentaire() );
-            cs.setString( 13, obj.get_motDePasse() );
+            cs.setString( 1, obj.get_nom() );
+            cs.setString( 2, obj.get_prenom() );
+            cs.setString( 3, obj.get_sexeToString() );
+            cs.setString( 4, obj.get_mail() );
+            cs.setString( 5, obj.get_tel() );
+            cs.setDate( 6, ServiceDAO.setDateTime( obj.get_dateNaissance() ) );
+            cs.setString( 7, obj.get_adresse() );
+            cs.setString( 8, obj.get_codePostal() );
+            cs.setString( 9, obj.get_ville() );
+            cs.setString( 10, obj.get_pays() );
+            cs.setString( 11, obj.get_commentaire() );
+            cs.setString( 12, obj.get_motDePasse() );
 
             // OUT
-            cs.registerOutParameter( 14, java.sql.Types.INTEGER );
-            cs.registerOutParameter( 15, java.sql.Types.VARCHAR );
-            cs.registerOutParameter( 16, java.sql.Types.INTEGER );
+            cs.registerOutParameter( 13, java.sql.Types.INTEGER );
+            cs.registerOutParameter( 14, java.sql.Types.VARCHAR );
+            cs.registerOutParameter( 15, java.sql.Types.INTEGER );
             cs.execute();
 
             // Récupération des OUT
-            errcode = cs.getInt( 14 );
-            errmsg = cs.getString( 15 );
-            id = cs.getInt( 16 );
+            errcode = cs.getInt( 13 );
+            errmsg = cs.getString( 14 );
+            id = cs.getInt( 15 );
 
             // Traitement des informations (id+erreurs)
             switch ( errcode ) {

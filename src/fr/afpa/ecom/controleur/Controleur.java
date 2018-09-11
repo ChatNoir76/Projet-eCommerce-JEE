@@ -1,9 +1,9 @@
 package fr.afpa.ecom.controleur;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,12 +15,15 @@ import fr.afpa.ecom.controleur.service.ServClient;
 import fr.afpa.ecom.controleur.service.ServPanier;
 import fr.afpa.ecom.controleur.service.ServSession;
 import fr.afpa.ecom.controleur.service.ServiceException;
+import fr.afpa.ecom.forms.ClientForm;
+import fr.afpa.ecom.forms.FormsException;
 import fr.afpa.ecom.modele.Client;
 import fr.afpa.ecom.modele.Panier;
 import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.AbstractDAOFactory;
 import fr.afpa.ecom.modele.dao.DaoException;
 import fr.afpa.ecom.modele.dao.EnumDAO;
+import fr.afpa.ecom.modele.dao.ServiceDAO;
 import fr.afpa.ecom.modele.secondaire.CommandeProduit;
 
 /**
@@ -86,26 +89,28 @@ public class Controleur extends HttpServlet {
     private static final String        FORM_CLIENTINSCRIPTION = "form_clientinscription";
 
     // CHAMP : paramètre venant d'un formulaire
-    private static final String        CHAMP_EMAIL            = "email";
-    private static final String        CHAMP_PASS             = "motdepasse";
-    private static final String        CHAMP2_ADDRESSE        = "inputAddress";
-    private static final String        CHAMP2_NOM             = "inputNom";
-    private static final String        CHAMP2_PRENOM          = "inputPrenom";
-    private static final String        CHAMP2_SEXE            = "inputSexe";
-    private static final String        CHAMP2_MAIL            = "inputEmail";
-    private static final String        CHAMP2_PWD             = "inputPassword";
-    private static final String        CHAMP2_TEL             = "inputTel";
-    private static final String        CHAMP2_NAISSANCE       = "inputNaissance";
-    private static final String        CHAMP2_VILLE           = "inputCity";
-    private static final String        CHAMP2_CODEPOSTAL      = "inputCP";
-    private static final String        CHAMP2_PAYS            = "inputPays";
-    private static final String        CHAMP2_COMMENTAIRE     = "Textarea";
+    public static final String        CHAMP1_EMAIL           = "email";
+    public static final String        CHAMP1_PASS            = "motdepasse";
+
+    public static final String        CHAMP2_NOM             = "inputNom";
+    public static final String        CHAMP2_PRENOM          = "inputPrenom";
+    public static final String        CHAMP2_SEXE            = "inputSexe";
+    public static final String        CHAMP2_MAIL            = "inputEmail";
+    public static final String        CHAMP2_PWD             = "inputPassword";
+    public static final String        CHAMP2_TEL             = "inputTel";
+    public static final String        CHAMP2_NAISSANCE       = "inputNaissance";
+    public static final String        CHAMP2_ADDRESSE        = "inputAddress";
+    public static final String        CHAMP2_VILLE           = "inputCity";
+    public static final String        CHAMP2_CODEPOSTAL      = "inputCP";
+    public static final String        CHAMP2_PAYS            = "inputPays";
+    public static final String        CHAMP2_COMMENTAIRE     = "Textarea";
 
     // PARAM : Paramètre de l'url en méthode get
     public static final String         PARAM_IDPRODUIT        = "idProduit";
 
     // Initialisation de la factory
     private static AbstractDAOFactory  _daoFact;
+
     // détermination de la prochaine vue
     private String                     _NEXTVIEW;
     private boolean                    isError                = false;
@@ -248,6 +253,8 @@ public class Controleur extends HttpServlet {
             generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } catch ( DaoException e ) {
             generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
+        } catch ( Exception e ) {
+            generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } finally {
             navigateTo( _NEXTVIEW );
         }
@@ -268,6 +275,8 @@ public class Controleur extends HttpServlet {
             generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } catch ( DaoException e ) {
             generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
+        } catch ( Exception e ) {
+            generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } finally {
             navigateTo( null );
         }
@@ -283,7 +292,8 @@ public class Controleur extends HttpServlet {
         // création panier si non loggé
         if ( _VALATT_Client == null ) {
             // creation commande-client
-            ServPanier.initialisationClientCommandePourPanier();
+            Client guest = ServPanier.initialisationClientGuest();
+            ServPanier.initialisationPanier( guest );
             // mise à jour session
             _VALATT_Client = ServSession.getSessionClient();
         }
@@ -295,41 +305,39 @@ public class Controleur extends HttpServlet {
         ServSession.setSessionPanier( p );
     }
 
-    private void traitementFormulaires() throws ServiceException, DaoException {
+    private void traitementFormulaires() throws ServiceException, DaoException, FormsException {
         switch ( _request.getParameter( _FORMULAIRE ) ) {
         case FORM_CLIENTCONNEXION:
-            String mail = ServSession.getValeurChamp( CHAMP_EMAIL );
-            String mdp = ServSession.getValeurChamp( CHAMP_PASS );
-            Client log = ServClient.connexionClient( mail, mdp );
-            if ( _VALATT_Client != null ) {
-                for ( CommandeProduit cp : _VALATT_Panier.getArticles() ) {
-                    _daoFact.getPanier( log.get_id() ).ajoutPanier( cp.get_produit().get_id(), cp.get_quantite() );
-
-                }
-            }
-
-            Panier p = _daoFact.getPanier( log.get_id() ).getPanier();
-            ServSession.setSessionPanier( p );
+            // Connexion du client
+            ClientForm cf1 = new ClientForm();
+            Client loginC = cf1.connexionClient();
+            
+            // vérif et récupération panier
+            fusionRecuperationPanier( loginC.get_id() );
             break;
 
         case FORM_CLIENTINSCRIPTION:
+            // inscription et connexion du client
+            ClientForm cf2 = new ClientForm();
+            Client ic = cf2.inscriptionClient();
 
-            String email = ServSession.getValeurChamp( CHAMP_EMAIL );
-            // inputNom
-            // inputPrenom
-            // inputSexe
-            // inputEmail
-            // inputPassword
-            // inputTel
-            // inputNaissance
-            // inputAddress
-            // inputCity
-            // inputCP
-            // inputPays
-            // Textarea
-
+            // vérif et récupération panier
+            fusionRecuperationPanier( ic.get_id() );
             break;
         }
+    }
+    
+    private void fusionRecuperationPanier( int idClient) throws DaoException
+    {
+        if ( _VALATT_Client != null ) {
+            for ( CommandeProduit cp : _VALATT_Panier.getArticles() ) {
+                _daoFact.getPanier( idClient ).ajoutPanier( cp.get_produit().get_id(), cp.get_quantite() );
+
+            }
+        }
+        
+        Panier p = _daoFact.getPanier( idClient ).getPanier();
+        ServSession.setSessionPanier( p );
     }
 
     private void generateErrorToJSP( int errcode, String errtype, String errmsg ) {

@@ -274,8 +274,7 @@ public class Client {
      * @param commentaire_client
      * @param mdp_client
      */
-    public Client( LocalDateTime date_inscription_client,
-            String nom_client,
+    public Client( String nom_client,
             String prenom_client,
             char sexe_client,
             String mail_client,
@@ -288,7 +287,7 @@ public class Client {
             String commentaire_client,
             String mdp_client ) {
         _id = -1;
-        _dateInscription = date_inscription_client;
+        _dateInscription = null;
         _nom = nom_client;
         _prenom = prenom_client;
         _sexe = sexe_client;
