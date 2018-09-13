@@ -37,7 +37,10 @@ import fr.afpa.ecom.modele.secondaire.CommandeProduit;
         "/produit",
         "/ajoutPanier",
         "/panier",
-        "/inscription" } )
+        "/inscription",
+        "/modifierqty",
+        "/refreshpanier",
+        "/codebonus" } )
 public class Controleur extends HttpServlet {
     private static final long          serialVersionUID       = 1L;
     private static HttpServletRequest  _request;
@@ -61,6 +64,9 @@ public class Controleur extends HttpServlet {
     private static final String        HREF_AJOUTPANIER       = "/ajoutPanier";
     private static final String        HREF_PANIER            = "/panier";
     private static final String        HREF_INSCRIPTION       = "/inscription";
+    private static final String        HREF_PRODUITQTY        = "/modifierqty";
+    private static final String        HREF_REFRESHPANIER     = "/refreshpanier";
+    private static final String        HREF_CODEBONUS         = "/codebonus";
 
     // ATT : attribut de la variable de session
     public static final String         ATT_CLIENT             = "client";
@@ -89,24 +95,26 @@ public class Controleur extends HttpServlet {
     private static final String        FORM_CLIENTINSCRIPTION = "form_clientinscription";
 
     // CHAMP : paramètre venant d'un formulaire
-    public static final String        CHAMP1_EMAIL           = "email";
-    public static final String        CHAMP1_PASS            = "motdepasse";
+    public static final String         CHAMP1_EMAIL           = "email";
+    public static final String         CHAMP1_PASS            = "motdepasse";
 
-    public static final String        CHAMP2_NOM             = "inputNom";
-    public static final String        CHAMP2_PRENOM          = "inputPrenom";
-    public static final String        CHAMP2_SEXE            = "inputSexe";
-    public static final String        CHAMP2_MAIL            = "inputEmail";
-    public static final String        CHAMP2_PWD             = "inputPassword";
-    public static final String        CHAMP2_TEL             = "inputTel";
-    public static final String        CHAMP2_NAISSANCE       = "inputNaissance";
-    public static final String        CHAMP2_ADDRESSE        = "inputAddress";
-    public static final String        CHAMP2_VILLE           = "inputCity";
-    public static final String        CHAMP2_CODEPOSTAL      = "inputCP";
-    public static final String        CHAMP2_PAYS            = "inputPays";
-    public static final String        CHAMP2_COMMENTAIRE     = "Textarea";
+    public static final String         CHAMP2_NOM             = "inputNom";
+    public static final String         CHAMP2_PRENOM          = "inputPrenom";
+    public static final String         CHAMP2_SEXE            = "inputSexe";
+    public static final String         CHAMP2_MAIL            = "inputEmail";
+    public static final String         CHAMP2_PWD             = "inputPassword";
+    public static final String         CHAMP2_TEL             = "inputTel";
+    public static final String         CHAMP2_NAISSANCE       = "inputNaissance";
+    public static final String         CHAMP2_ADDRESSE        = "inputAddress";
+    public static final String         CHAMP2_VILLE           = "inputCity";
+    public static final String         CHAMP2_CODEPOSTAL      = "inputCP";
+    public static final String         CHAMP2_PAYS            = "inputPays";
+    public static final String         CHAMP2_COMMENTAIRE     = "Textarea";
 
     // PARAM : Paramètre de l'url en méthode get
     public static final String         PARAM_IDPRODUIT        = "idProduit";
+    public static final String         PARAM_PRODUITQTY       = "produitQty";
+    public static final String         PARAM_MONBONUS         = "monbonus";
 
     // Initialisation de la factory
     private static AbstractDAOFactory  _daoFact;
@@ -214,6 +222,18 @@ public class Controleur extends HttpServlet {
         case HREF_INSCRIPTION:
             _NEXTVIEW = VUE_INSCRIPTION;
             break;
+        case HREF_PRODUITQTY:
+            _NEXTVIEW = VUE_PANIER;
+            modifQtyProduit();
+            break;
+        case HREF_REFRESHPANIER:
+            _NEXTVIEW = VUE_PANIER;
+            refreshPanier();
+            break;
+        case HREF_CODEBONUS:
+            _NEXTVIEW = VUE_PANIER;
+            setBonus();
+            break;
         default:
             _NEXTVIEW = VUE_INDEX;
             generateErrorToJSP( 0, "fr.afpa.ecom.controleur", "erreur lors du chargement de la page " + nextPage );
@@ -222,19 +242,23 @@ public class Controleur extends HttpServlet {
 
     private void navigateTo( String maVue ) throws ServletException, IOException {
         _response.getWriter().append( "navigateTo : " + maVue + " - error? : " + isError );
-        if ( !isError ) {
-            if ( maVue == null ) {
-                _response.sendRedirect( getRedirectionIndex() );
+        if ( maVue != "write" ) {
+            if ( !isError ) {
+                if ( maVue == null ) {
+                    _response.sendRedirect( getRedirectionIndex() );
+                } else {
+                    this.getServletContext().getRequestDispatcher( maVue ).forward( _request, _response );
+                }
             } else {
-                this.getServletContext().getRequestDispatcher( maVue ).forward( _request, _response );
+                // en cas d'erreur
+                if ( _NEXTVIEW == null ) {
+                    this.getServletContext().getRequestDispatcher( VUE_INDEX ).forward( _request, _response );
+                } else {
+                    this.getServletContext().getRequestDispatcher( _NEXTVIEW ).forward( _request, _response );
+                }
             }
         } else {
-            // en cas d'erreur
-            if ( _NEXTVIEW == null ) {
-                this.getServletContext().getRequestDispatcher( VUE_INDEX ).forward( _request, _response );
-            } else {
-                this.getServletContext().getRequestDispatcher( _NEXTVIEW ).forward( _request, _response );
-            }
+            _response.getWriter().append( "\nnavigateTo : " + maVue );
         }
 
     }
@@ -284,6 +308,48 @@ public class Controleur extends HttpServlet {
     }
 
     // METHODE ANNEXE
+    private void setBonus() throws DaoException
+    {
+        String monCode = ServSession.getValeurChamp( PARAM_MONBONUS );
+        switch (monCode)
+        {
+        case "global10":
+            _VALATT_Panier.get_commande().set_remiseGlobale( 0.10 );
+            _daoFact.getCommande().update( _VALATT_Panier.get_commande() );
+            ServSession.setSessionPanier( _VALATT_Panier );
+            break;
+        case "rocky15":
+            for (CommandeProduit cp : _VALATT_Panier.getArticles())
+            {
+                if (cp.get_produit().get_id() == 12)
+                {
+                    cp.set_remise( 0.15f );
+                }
+            }
+            refreshPanier();
+            break;
+        }
+    }
+    
+    private void refreshPanier() throws DaoException {
+        _daoFact.getPanier( _VALATT_Client.get_id() ).updatePanier( _VALATT_Panier );
+
+        // rechargement du panier en cas de delete suite à qty = 0
+        _VALATT_Panier = _daoFact.getPanier( _VALATT_Client.get_id() ).getPanier();
+        ServSession.setSessionPanier( _VALATT_Panier );
+    }
+
+    private void modifQtyProduit() {
+        int maQty = Integer.parseInt( ServSession.getValeurChamp( PARAM_PRODUITQTY ) );
+        int idP = Integer.parseInt( ServSession.getValeurChamp( PARAM_IDPRODUIT ) );
+
+        for ( CommandeProduit cp : _VALATT_Panier.getArticles() ) {
+            if ( cp.get_produit().get_id() == idP ) {
+                cp.set_quantite( maQty );
+            }
+        }
+        ServSession.setSessionPanier( _VALATT_Panier );
+    }
 
     private void panierAjouter() throws DaoException, ServiceException {
         // récupération de l'id produit
@@ -311,7 +377,7 @@ public class Controleur extends HttpServlet {
             // Connexion du client
             ClientForm cf1 = new ClientForm();
             Client loginC = cf1.connexionClient();
-            
+
             // vérif et récupération panier
             fusionRecuperationPanier( loginC.get_id() );
             break;
@@ -326,16 +392,15 @@ public class Controleur extends HttpServlet {
             break;
         }
     }
-    
-    private void fusionRecuperationPanier( int idClient) throws DaoException
-    {
+
+    private void fusionRecuperationPanier( int idClient ) throws DaoException {
         if ( _VALATT_Client != null ) {
             for ( CommandeProduit cp : _VALATT_Panier.getArticles() ) {
                 _daoFact.getPanier( idClient ).ajoutPanier( cp.get_produit().get_id(), cp.get_quantite() );
 
             }
         }
-        
+
         Panier p = _daoFact.getPanier( idClient ).getPanier();
         ServSession.setSessionPanier( p );
     }

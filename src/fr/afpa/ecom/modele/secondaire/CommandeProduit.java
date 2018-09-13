@@ -11,8 +11,13 @@ public class CommandeProduit {
     private float  _tva;
     private double _prix_TTC;
 
+
     public int get_quantite() {
         return _quantite;
+    }
+    
+    public void set_quantite(int qty) {
+        _quantite = qty;
     }
 
     public double get_prix_HT() {
@@ -21,6 +26,11 @@ public class CommandeProduit {
 
     public double get_remise() {
         return _remise;
+    }
+    
+
+    public void set_remise( float _remise ) {
+        this._remise = _remise;
     }
 
     public double get_tva() {

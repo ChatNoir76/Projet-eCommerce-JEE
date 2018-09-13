@@ -13,26 +13,24 @@
 				<form method="post" action="connexion">
 
 					<fieldset>
-
 						<legend>Connexion</legend>
-
-						<div class="form-group form_ligne">
-							<label class="form_label" for="email">Adresse email</label> 
-							<input class="form_input" type="text" id="email" name="email" value="" maxlength="60" required/>
-							<span class="text-danger">*</span><br /> 
-						</div>
-						<div class="form-group form_ligne">
-							<label class="form_label" for="motdepasse">Mot de passe</label> 
-							<input class="form_input" type="password" id="motdepasse" name="motdepasse" value="" maxlength="20" required/>
-							<span class="text-danger">*</span><br /> 
-						</div>
-							<input type="submit" value="Connexion" class="btn btn-dark form_submit" />
-							<input type="hidden" id="formulaire" name="formulaire" value="form_clientconnexion">
-						<div>
-						</div>
-						<div>
-							<a href="/eCommerce/inscription">créer un compte</a>
-						</div>
+						<div class="form-row">
+							<div class="form-group col-md-12">
+								<label for="email">Adresse email<span class="text-danger">*</span><br /> </label> 
+								<input class="form-control" type="text" id="email" name="email" value="" maxlength="60" required/>
+							</div>
+							<div class="form-group col-md-12">
+								<label for="motdepasse">Mot de passe<span class="text-danger">*</span><br /></label> 
+								<input class="form-control" type="password" id="motdepasse" name="motdepasse" value="" maxlength="20" required/>
+							</div>
+							</div>
+								<input type="submit" value="Connexion" class="btn btn-dark form_submit" />
+								<input type="hidden" id="formulaire" name="formulaire" value="form_clientconnexion">
+							<div>
+							</div>
+							<div>
+								<a href="/eCommerce/inscription">créer un compte</a>
+							</div>
 					</fieldset>
 
 				</form>

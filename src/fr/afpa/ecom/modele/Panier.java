@@ -6,10 +6,22 @@ import fr.afpa.ecom.modele.secondaire.CommandeProduit;
 
 public class Panier {
 
-    private int                        _idCommande;
+    private Commande                   _commande;
     private int                        _idClient;
     private ArrayList<CommandeProduit> articles;
-    
+
+    public int get_idCommande() {
+        return _commande.get_id();
+    }
+
+    public int get_idClient() {
+        return _idClient;
+    }
+
+    public Commande get_commande() {
+        return _commande;
+    }
+
     public int count() {
         int nbcount = 0;
         for ( CommandeProduit cp : articles ) {
@@ -17,15 +29,14 @@ public class Panier {
         }
         return nbcount;
     }
-    
-    public double getSommeAPayer()
-    {
+
+    public double getSommeAPayer() {
         double apayer = 0;
         for ( CommandeProduit cp : articles ) {
-            apayer += (cp.get_prix_TTC_unitaire() * cp.get_quantite());
+            apayer += ( cp.get_prix_TTC_unitaire() * cp.get_quantite() );
         }
 
-        return apayer;
+        return apayer - ( apayer * _commande.get_remiseGlobale() );
     }
 
     public ArrayList<CommandeProduit> getArticles() {
@@ -36,17 +47,16 @@ public class Panier {
         this.articles = articles;
     }
 
-    public Panier( int idCommande, int idClient, ArrayList<CommandeProduit> mesArticles ) {
-        this._idCommande = idCommande;
+    public Panier( Commande commande, int idClient, ArrayList<CommandeProduit> mesArticles ) {
+        this._commande = commande;
         this._idClient = idClient;
         this.articles = ( mesArticles == null ? new ArrayList<CommandeProduit>() : mesArticles );
     }
 
-    public Panier( int idCommande, int idClient ) {
-        this._idCommande = idCommande;
+    public Panier( Commande commande, int idClient ) {
+        this._commande = commande;
         this._idClient = idClient;
         this.articles = new ArrayList<CommandeProduit>();
     }
-    
 
 }

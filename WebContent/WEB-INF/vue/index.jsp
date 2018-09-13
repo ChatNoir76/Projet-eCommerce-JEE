@@ -10,6 +10,24 @@
 	<section id='contenu'>
 		<section id='cadreBlanc' class="container">
 			<p>Bienvenue sur le site eCommerce</p>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+			  <div class="collapse navbar-collapse" id="navbarNav">
+			    <ul class="navbar-nav">
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">CD/Vinyl/Music</a>
+			      </li>
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">DVD/Film</a>
+			      </li>
+			      <li class="nav-item active">
+			        <a class="nav-link" href="#">Jeux</a>
+			      </li>
+			      <li class="nav-item active">
+			       <a class="nav-link" href="#">Autres</a>
+			      </li>
+			    </ul>
+			  </div>
+			</nav>
 			<div class="row justify-content-md-center align-items-start" style="width: 90%">
 				<c:forEach var="lp" items="${ listproduit }">
 					<div class="col-sm">
