@@ -25,6 +25,7 @@ public class DAOPanier {
     private final static String        _PSgetIdCommande          = "CALL ps_panier_getcommandefromclient(?,?,?)";
     private final static String        _PSgetListCommandeProduit = "CALL ps_panier_getlistcommandeproduit(?,?,?)";
     private final static String        _PSAjoutPanier            = "CALL ps_panier_ajoutproduit(?,?,?,?,?)";
+    private final static String        _PSvalidationPanier       = "call ps_panier_validation(?,?,?)";
 
     private Connection                 _con                      = null;
     private int                        _idClient                 = -1;
@@ -83,8 +84,7 @@ public class DAOPanier {
 
         int errcode;
         String errmsg;
-       
-        
+
         for ( CommandeProduit cp : p.getArticles() ) {
 
             try {
@@ -99,12 +99,11 @@ public class DAOPanier {
                 cs.registerOutParameter( 5, java.sql.Types.INTEGER );
                 cs.registerOutParameter( 6, java.sql.Types.VARCHAR );
                 cs.execute();
-                
 
                 // Récupération des OUT
                 errcode = cs.getInt( 5 );
                 errmsg = cs.getString( 6 );
-                
+
                 if ( errcode != 0 ) {
                     throw new DaoException( errcode, errmsg );
                 }
@@ -114,12 +113,56 @@ public class DAOPanier {
         }
     }
 
+    public void validationPanier(int idCommande) throws DaoException
+    {
+        int errcode;
+        String errmsg;
+        ResultSet rs = null;
+
+        try {
+            CallableStatement cs = _con.prepareCall( _PSvalidationPanier );
+            // IN
+            cs.setInt( 1, idCommande );
+
+            // OUT
+            cs.registerOutParameter( 2, java.sql.Types.INTEGER );
+            cs.registerOutParameter( 3, java.sql.Types.VARCHAR );
+            cs.execute();
+            rs = cs.getResultSet();
+
+            // Récupération des OUT
+            errcode = cs.getInt( 2 );
+            errmsg = cs.getString( 3 );
+
+            while ( rs.next() ) {
+                for (CommandeProduit cp : _lcp)
+                {
+                    int idP = rs.getInt( 1 );
+                    int qty = rs.getInt( 2 );
+                    if (idP == cp.get_produit().get_id())
+                    {
+                        cp.set_quantite( qty );
+                    }
+                }
+            }
+            rs.close();
+               
+            updatePanier( getPanier() );
+            
+            // Traitement des informations (id+erreurs)
+            if ( errcode != 0 ) {
+                throw new DaoException( errcode, errmsg );
+            }
+        } catch ( SQLException e ) {
+            throw new DaoException( e.getErrorCode(), e.getMessage() );
+        }
+    }
+    
     // METHODES PRIVEES
     private void getStatusClient() throws DaoException {
         int errcode;
         String errmsg;
-        
-        
+
         try {
             CallableStatement cs = _con.prepareCall( _PSdernierStatus );
             // IN
@@ -131,7 +174,6 @@ public class DAOPanier {
             cs.registerOutParameter( 4, java.sql.Types.VARCHAR );
             cs.registerOutParameter( 5, java.sql.Types.INTEGER );
             cs.execute();
-           
 
             // Récupération des OUT
             errcode = cs.getInt( 3 );
@@ -151,7 +193,7 @@ public class DAOPanier {
         int errcode;
         String errmsg;
         ResultSet rs = null;
-        
+
         try {
             CallableStatement cs = _con.prepareCall( _PSgetIdCommande );
             // IN
@@ -166,9 +208,10 @@ public class DAOPanier {
             // Récupération des OUT
             errcode = cs.getInt( 2 );
             errmsg = cs.getString( 3 );
-            
+
             while ( rs.next() ) {
-                _commande = new Commande( rs.getInt( 1 ), rs.getDouble( 2 ), ServiceDAO.getDateTime( rs.getDate( 3 ), rs.getTime( 3 ) ),rs.getInt( 4 ) );
+                _commande = new Commande( rs.getInt( 1 ), rs.getDouble( 2 ),
+                        ServiceDAO.getDateTime( rs.getDate( 3 ), rs.getTime( 3 ) ), rs.getInt( 4 ) );
             }
             rs.close();
 

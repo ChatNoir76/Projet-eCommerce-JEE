@@ -15,6 +15,8 @@ function modificationQuantityPanier(idProduit, qty)
     $.ajax({
         method: "GET",
         url:"modifierqty?idProduit="+idProduit+"&produitQty="+qty
+    }).fail(function(){
+        document.getElementById('errajax').innerText = "erreur avec AJAX !!!";
     })
 }
 
@@ -25,6 +27,8 @@ function refreshPanier()
         url:"refreshpanier"
     }).done(function(){
         document.location.href="/eCommerce/panier";
+    }).fail(function(){
+        document.getElementById('errajax').innerText = "erreur avec AJAX !!!";
     })
     
 }
@@ -34,10 +38,37 @@ function codereduction()
     var cr = document.getElementById('codereduction').value;
     $.ajax({
         method: "GET",
-        url:"codebonus?monbonus="+cr
+        url:"codebonus?monbonus="+cr,
+        type: "text"
     }).done(function(){
-        cr.value = "";
+        document.getElementById('codereduction').value = "";
         document.location.href="/eCommerce/panier";
+    }).fail(function(){
+        document.getElementById('errajax').innerText = "erreur avec AJAX !!!";
+    })
+}
+
+function deleteWarning()
+{
+    $.ajax({
+        method: "GET",
+        url:"deleteWarning",
+        type: "text"
+    }).fail(function(){
+        document.getElementById('errajax').innerText = "erreur avec AJAX !!!";
+    })
+}
+
+function validationPanier()
+{
+    $.ajax({
+        method: "GET",
+        url:"validationpanier",
+        type: "text"
+    }).done(function(){
+        
+    }).fail(function(){
+        document.getElementById('errajax').innerText = "erreur avec AJAX !!!";
     })
 }
 

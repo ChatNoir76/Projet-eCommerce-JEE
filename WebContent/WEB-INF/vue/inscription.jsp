@@ -18,7 +18,7 @@
 			    </div>
 			    <div class="form-group col-md-5">
 			      <label for="inputPrenom"><span class="text-danger">*</span>Prenom</label>
-			      <input type="password" class="form-control" id="inputPrenom" name="inputPrenom" placeholder="Prenom" required />
+			      <input type="text" class="form-control" id="inputPrenom" name="inputPrenom" placeholder="Prenom" required />
 			    </div>
 			    <div class="form-group col-md-2">
 			      <label for="inputSexe">Sexe</label>
@@ -69,7 +69,7 @@
 			  </div>
 			  <div class="form-group">
 			      <label for="Textarea">Commentaire</label>
-			      <textarea class="form-control" id="Textarea" name="Textarea" rows="3" placeholder="commentaire lors de la livraison"></textarea>
+			      <textarea class="form-control" id="Textarea" name="Textarea" rows="3" value="France" placeholder="commentaire lors de la livraison"></textarea>
 			  </div>
 			  <input type="hidden" id="formulaire" name="formulaire" value="form_clientinscription">
 			  <button type="submit" class="btn btn-primary">Enregistrer</button>
