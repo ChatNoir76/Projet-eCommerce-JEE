@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.afpa.ecom.modele.Commande;
 import fr.afpa.ecom.modele.Panier;
@@ -25,13 +27,15 @@ public class DAOPanier {
     private final static String        _PSgetIdCommande          = "CALL ps_panier_getcommandefromclient(?,?,?)";
     private final static String        _PSgetListCommandeProduit = "CALL ps_panier_getlistcommandeproduit(?,?,?)";
     private final static String        _PSAjoutPanier            = "CALL ps_panier_ajoutproduit(?,?,?,?,?)";
-    private final static String        _PSvalidationPanier       = "call ps_panier_validation(?,?,?)";
+    private final static String        _PSvalidationPanier       = "CALL ps_panier_validation(?,?,?)";
+    private final static String        _PSGetAllPanier           = "CALL ps_panier_getall(?,?,?)";
 
     private Connection                 _con                      = null;
     private int                        _idClient                 = -1;
     private Commande                   _commande                 = null;
     private int                        _idStatutClient           = -1;
     private ArrayList<CommandeProduit> _lcp                      = new ArrayList<CommandeProduit>();
+    private ArrayList<CommandeProduit> cplist                    = new ArrayList<CommandeProduit>();
 
     // CONSTRUCTEUR
     public DAOPanier( Connection con, int idClient ) throws DaoException {
@@ -113,16 +117,21 @@ public class DAOPanier {
         }
     }
 
-    public void validationPanier(int idCommande) throws DaoException
+    public ArrayList<Panier> getAll() throws DaoException
     {
+        ArrayList<Panier> listPanier = new ArrayList<Panier>();
+        Panier p = null;
+        int idRSCommande = -1;
+        ResultSet rs = null;
         int errcode;
         String errmsg;
-        ResultSet rs = null;
-
+        if ( _idClient < 1 ) {
+            throw new DaoException( 99999, "le numéro de client est corrompue" );
+        }
         try {
-            CallableStatement cs = _con.prepareCall( _PSvalidationPanier );
+            CallableStatement cs = _con.prepareCall( _PSGetAllPanier );
             // IN
-            cs.setInt( 1, idCommande );
+            cs.setInt( 1, _idClient );
 
             // OUT
             cs.registerOutParameter( 2, java.sql.Types.INTEGER );
@@ -134,30 +143,84 @@ public class DAOPanier {
             errcode = cs.getInt( 2 );
             errmsg = cs.getString( 3 );
 
-            while ( rs.next() ) {
-                for (CommandeProduit cp : _lcp)
-                {
-                    int idP = rs.getInt( 1 );
-                    int qty = rs.getInt( 2 );
-                    if (idP == cp.get_produit().get_id())
-                    {
-                        cp.set_quantite( qty );
-                    }
-                }
-            }
-            rs.close();
-               
-            updatePanier( getPanier() );
-            
-            // Traitement des informations (id+erreurs)
             if ( errcode != 0 ) {
                 throw new DaoException( errcode, errmsg );
             }
+            
+            if ( rs != null ) {
+                while ( rs.next() ) {                    
+                    if (rs.getInt( 1 ) == idRSCommande)
+                    { // changement / création de panier
+                        if (idRSCommande != -1)
+                        { // mise en araylist du panier lors du changement
+                            listPanier.add( p );
+                        }
+                        
+                        idRSCommande = rs.getInt( 2 );
+                        Commande cmd = new Commande(rs.getInt( 2 ),rs.getDouble( 3 ),ServiceDAO.getDateTime( rs.getDate( 4 ), rs.getTime( 4 )),rs.getInt( 1 ));
+                        p = new Panier(cmd,_idClient);
+                    }
+                        p.addArticle( setArticleToPanier(rs) );
+                }
+            }
+            
+            
+            
         } catch ( SQLException e ) {
             throw new DaoException( e.getErrorCode(), e.getMessage() );
         }
+        
+        
+        
+        return listPanier;
     }
     
+    /**
+     * 
+     * @param idCommande
+     * @return des lignes CommandeProduit problématique avec la quantitée revu
+     *         et corrigée
+     * @throws DaoException
+     * @throws SQLException
+     */
+    public Map<Integer, Integer> validationPanier( int idCommande ) throws DaoException, SQLException {
+        int errcode;
+        String errmsg;
+        ResultSet rs = null;
+
+        Map<Integer, Integer> ListProd = new HashMap<Integer, Integer>();
+
+        CallableStatement cs = _con.prepareCall( _PSvalidationPanier );
+        // IN
+        cs.setInt( 1, idCommande );
+
+        // OUT
+        cs.registerOutParameter( 2, java.sql.Types.INTEGER );
+        cs.registerOutParameter( 3, java.sql.Types.VARCHAR );
+        cs.execute();
+        rs = cs.getResultSet();
+
+        // Récupération des OUT
+        errcode = cs.getInt( 2 );
+        errmsg = cs.getString( 3 );
+
+        if ( rs != null ) {
+            while ( rs.next() ) {
+                ListProd.put( rs.getInt( 1 ), rs.getInt( 2 ) );
+            }
+        }
+
+        rs.close();
+
+        // Traitement des informations (id+erreurs)
+        if ( errcode != 0 ) {
+            throw new DaoException( errcode, errmsg );
+        }
+
+        return ListProd;
+
+    }
+
     // METHODES PRIVEES
     private void getStatusClient() throws DaoException {
         int errcode;
@@ -263,5 +326,14 @@ public class DAOPanier {
             throw new DaoException( e.getErrorCode(), e.getMessage() );
         }
     }
+    
 
+    private CommandeProduit setArticleToPanier(ResultSet rs) throws SQLException
+    {
+        Produit p = new Produit(rs.getInt( 12 ), rs.getString( 13 ), rs.getDouble( 14 ), rs.getInt( 15 ),
+                rs.getInt( 16 ), rs.getInt( 17 ), rs.getFloat( 18 ), rs.getInt( 19 ));
+        CommandeProduit cp = new CommandeProduit(rs.getInt( 7 ), rs.getDouble( 8 ), rs.getFloat( 9 ), rs.getFloat( 10 ),
+                rs.getDouble( 11 ), p );
+        return cp;
+    }
 }

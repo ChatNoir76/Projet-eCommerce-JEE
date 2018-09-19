@@ -1,8 +1,11 @@
 package fr.afpa.ecom.controleur;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -42,7 +45,8 @@ import fr.afpa.ecom.modele.secondaire.CommandeProduit;
         "/refreshpanier",
         "/codebonus",
         "/validationpanier",
-        "/deleteWarning" } )
+        "/deleteWarning",
+        "/validation" } )
 public class Controleur extends HttpServlet {
     private static final long          serialVersionUID       = 1L;
     private static HttpServletRequest  _request;
@@ -53,7 +57,7 @@ public class Controleur extends HttpServlet {
     private static final String        VUE_AJAX_RETURN        = "write";
     private static final String        VUE_INDEX              = "/WEB-INF/vue/index.jsp";
     private static final String        VUE_CONNEXION          = "/WEB-INF/vue/connexion.jsp";
-    private static final String        VUE_LISTECLIENT        = "/WEB-INF/vue/listeClient.jsp";
+    private static final String        VUE_LISTECLIENT        = "/restriction/listeClient.jsp";
     private static final String        VUE_PRODUIT            = "/WEB-INF/vue/produit.jsp";
     private static final String        VUE_PANIER             = "/WEB-INF/vue/panier.jsp";
     private static final String        VUE_INSCRIPTION        = "/WEB-INF/vue/inscription.jsp";
@@ -73,6 +77,7 @@ public class Controleur extends HttpServlet {
     private static final String        HREF_CODEBONUS         = "/codebonus";
     private static final String        HREF_VALIDATIONPANIER  = "/validationpanier";
     private static final String        HREF_DELETEWARNING     = "/deleteWarning";
+    private static final String        HREF_VALIDATION        = "/validation";
 
     // ATT : attribut de la variable de session
     public static final String         ATT_CLIENT             = "client";
@@ -94,6 +99,7 @@ public class Controleur extends HttpServlet {
     private Produit                    _VALATT_Produit        = null;
     private Panier                     _VALATT_Panier         = null;
     private ErrJsp                     _VALATT_Erreur         = null;
+    private ArrayList<String>          _VALATT_WarningJSP     = new ArrayList<String>();
 
     // FORM : paramètre de formulaire via methode post (via traitement
     // formulaire())
@@ -162,7 +168,7 @@ public class Controleur extends HttpServlet {
                 + _request.getContextPath();
     }
 
-    private String getRedirectionIndex() {
+    public static String getRedirectionIndex() {
         return _request.getContextPath()
                 + HREF_INDEX;
     }
@@ -187,15 +193,16 @@ public class Controleur extends HttpServlet {
         _VALATT_Produit = ServSession.getSessionProduit();
         _VALATT_Panier = ServSession.getSessionPanier();
         _VALATT_Erreur = ServSession.getSessionErreur();
-        
+
         // remise à zéro des erreurs
         generateErrorToJSP( -1, null, null );
+        generateWarningToJSP( null );
 
         // initialisation des dao
         _daoFact = AbstractDAOFactory.getFactory( EnumDAO.MySQL );
     }
 
-    private void redirection() throws DaoException, ServiceException, IOException {
+    private void redirection() throws DaoException, ServiceException, IOException, SQLException {
         // récupération de l'url appelée
         String nextPage = _request.getServletPath();
         // récupération de la page à afficher en fonction de l'url
@@ -247,8 +254,10 @@ public class Controleur extends HttpServlet {
             generateWarningToJSP( null );
             break;
         case HREF_VALIDATIONPANIER:
-            _NEXTVIEW = VUE_AJAX_RETURN;
             validationPanier();
+            break;
+        case HREF_VALIDATION:
+            _NEXTVIEW = VUE_VALIDATION;
             break;
         default:
             _NEXTVIEW = VUE_INDEX;
@@ -295,8 +304,8 @@ public class Controleur extends HttpServlet {
             generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } catch ( DaoException e ) {
             generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
-        } catch ( Exception e ) {
-            generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
+        } catch ( SQLException e ) {
+            generateErrorToJSP( e.getErrorCode(), e.getClass().getName(), e.getMessage() );
         } finally {
             navigateTo( _NEXTVIEW );
         }
@@ -317,8 +326,10 @@ public class Controleur extends HttpServlet {
             generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } catch ( DaoException e ) {
             generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
-        } catch ( Exception e ) {
+        } catch ( FormsException e ) {
             generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
+        } catch ( SQLException e ) {
+            generateErrorToJSP( e.getErrorCode(), e.getClass().getName(), e.getMessage() );
         } finally {
             navigateTo( null );
         }
@@ -326,12 +337,29 @@ public class Controleur extends HttpServlet {
     }
 
     // METHODE ANNEXE
-    
-    private void validationPanier()
-    {
-        //procedure stockee validation panier via dao panier
+
+    private void validationPanier() throws DaoException, SQLException {
+        Map<Integer, Integer> ListProduitPb = _daoFact.getPanier( _VALATT_Client.get_id() )
+                .validationPanier( _VALATT_Panier.get_idCommande() );
+
+        if ( ListProduitPb.size() == 0 ) {
+            _NEXTVIEW = VUE_INDEX;
+            
+        } else {
+            _NEXTVIEW = VUE_PANIER;
+            for ( int idProd : ListProduitPb.keySet() ) {
+                for ( CommandeProduit pcp : _VALATT_Panier.getArticles() ) {
+                    if ( idProd == pcp.get_produit().get_id() ) {
+                        generateWarningToJSP( "il n'a y plus que " + ListProduitPb.get( idProd )
+                                + "ex dispo pour le produit "
+                                + pcp.get_produit().get_nomProduit() + " veuillez mettre votre panier à jour..." );
+                    }
+                }
+            }
+        }
+        refreshPanier();
     }
-    
+
     private void setBonus() throws DaoException {
         String monCode = ServSession.getValeurChamp( PARAM_MONBONUS );
 
@@ -441,7 +469,17 @@ public class Controleur extends HttpServlet {
     }
 
     private void generateWarningToJSP( String warningmsg ) {
-        _session.setAttribute( ATT_WARNINGMSG, warningmsg );
+        if (warningmsg != null)
+        {
+            _VALATT_WarningJSP.add( warningmsg );
+            _session.setAttribute( ATT_WARNINGMSG, _VALATT_WarningJSP );
+        }
+        else
+        {
+            _VALATT_WarningJSP.clear();
+            _session.setAttribute( ATT_WARNINGMSG, null );
+        }
+        
     }
 
 }

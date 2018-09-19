@@ -33,11 +33,17 @@ public class Restriction implements Filter {
         HttpSession session = request.getSession();
 
         if ( session.getAttribute( Controleur.ATT_CLIENT ) == null ) {
-            response.getWriter().append( "le compte est en invité" );
+            response.sendRedirect( Controleur.getRedirectionIndex() );
         } else {
             Client c = ServSession.getSessionClient();
             int lvl = ServSession.getSessionInt( Controleur.ATT_CLIENT_STT );
-            response.getWriter().append( "client id=" + c.get_id() + " de niveau : " + lvl );
+            if (lvl >= 5)
+            {
+                chain.doFilter( request, response );
+            } else
+            {
+                response.sendRedirect( Controleur.getRedirectionIndex() );
+            }
         }
     }
 

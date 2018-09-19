@@ -30,8 +30,16 @@ public class ServSession {
 
     public static LocalDateTime getChampDate( String nomChampDate )
     {
-        LocalDateTime valeur = LocalDateTime.parse( Controleur.getRequest().getParameter( nomChampDate ));
-            return valeur;
+        String valeur = getValeurChamp(nomChampDate);
+        if ( valeur == null ) {
+            return LocalDateTime.of( 1900, 01, 01, 00, 00,00 );
+        } else {
+            String[] maDate = valeur.split( "-");
+            int y = Integer.parseInt( maDate[0]);
+            int m = Integer.parseInt( maDate[1]);
+            int d = Integer.parseInt( maDate[2]);
+            return LocalDateTime.of( y, m, d + 1, 00, 00,00 );
+        }
     }
     
     public static String getSessionString( String attribut ) {

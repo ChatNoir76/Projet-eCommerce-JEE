@@ -61,27 +61,8 @@ function deleteWarning()
 
 function validationPanier()
 {
-    $.ajax({
-        method: "GET",
-        url:"validationpanier",
-        type: "text"
-    }).done(function(){
-        
-    }).fail(function(){
-        document.getElementById('errajax').innerText = "erreur avec AJAX !!!";
-    })
+    document.location.href="/eCommerce/validationpanier";
 }
-
-$(document).ready(function()
-{
-    /*
-    $.ajax({
-        method: "GET",
-        url:"ajoutPanier?idProduit="+id
-    })
-    */
-	
-});
 
 
 

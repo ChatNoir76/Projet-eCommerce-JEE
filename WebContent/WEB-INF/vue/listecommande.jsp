@@ -4,9 +4,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Historique des commandes</title>
 </head>
 <body>
-	<p>Restriction</p>
+	
 </body>
 </html>

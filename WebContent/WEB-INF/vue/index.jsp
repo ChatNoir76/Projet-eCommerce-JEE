@@ -53,8 +53,6 @@
 									<div class="alert alert-danger" role="alert">Rupture !!!
 									</div>
 								</c:if>
-
-
 							</div>
 						</div>
 					</div>

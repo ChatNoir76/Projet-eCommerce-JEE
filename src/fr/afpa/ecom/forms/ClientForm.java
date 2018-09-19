@@ -43,7 +43,7 @@ public class ClientForm {
         String mail;
         String mdp;
         String tel;
-        LocalDateTime naissance;
+        LocalDateTime naissance = null;
         String addresse;
         String ville;
         String cp;
@@ -81,9 +81,9 @@ public class ClientForm {
             throw new FormsException("problème lors de l'initialisation de la variable POST : " + Controleur.CHAMP2_TEL );
         }
         try {
-            naissance = LocalDateTime.now(); //ServSession.getChampDate( Controleur.CHAMP2_NAISSANCE );
+            naissance = ServSession.getChampDate( Controleur.CHAMP2_NAISSANCE );
         } catch (Exception e) {
-            throw new FormsException("problème lors de l'initialisation de la variable POST : " + Controleur.CHAMP2_NAISSANCE );
+            throw new FormsException("problème lors de l'initialisation de la variable POST : " + Controleur.CHAMP2_NAISSANCE);
         }
         try {
             addresse = ServSession.getValeurChamp( Controleur.CHAMP2_ADDRESSE );

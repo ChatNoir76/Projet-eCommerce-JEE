@@ -20,12 +20,14 @@
 			</div>
 		</c:if>
 		<c:if test="${ !empty warmsg }">
-			<div class="alert alert-warning alert-dismissible fade show" role="alert">
-			  <strong>Attention!!!</strong> <c:out value="${ warmsg }" />
-			  <button type="button" class="close" onClick="deleteWarning()" data-dismiss="alert" aria-label="Close">
-			    <span aria-hidden="true">&times;</span>
-			  </button>
-			</div>
+			<c:forEach var="wmsg" items="${ warmsg }">
+				<div class="alert alert-warning alert-dismissible fade show" role="alert">
+				  <strong>Attention!!!</strong> <c:out value="${ wmsg }" />
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				    <span aria-hidden="true">&times;</span>
+				  </button>
+				</div>
+			</c:forEach>
 		</c:if>
 		<div id="errajax" style="color: yellow" ></div>
 	</aside>

@@ -46,6 +46,14 @@ public class Panier {
     public void setArticles( ArrayList<CommandeProduit> articles ) {
         this.articles = articles;
     }
+    
+    public void addArticle(CommandeProduit comProd)
+    {
+        if (this.articles == null) {
+            this.articles = new ArrayList<CommandeProduit>();
+        }
+        this.articles.add( comProd );
+    }
 
     public Panier( Commande commande, int idClient, ArrayList<CommandeProduit> mesArticles ) {
         this._commande = commande;
