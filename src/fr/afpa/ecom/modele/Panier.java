@@ -1,5 +1,7 @@
 package fr.afpa.ecom.modele;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import fr.afpa.ecom.modele.secondaire.CommandeProduit;
@@ -16,6 +18,11 @@ public class Panier {
 
     public int get_idClient() {
         return _idClient;
+    }
+
+    public String getDateCommande() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "dd MMMM yyyy" );
+        return _commande.get_creationCommande().format( dtf );
     }
 
     public Commande get_commande() {
@@ -46,10 +53,9 @@ public class Panier {
     public void setArticles( ArrayList<CommandeProduit> articles ) {
         this.articles = articles;
     }
-    
-    public void addArticle(CommandeProduit comProd)
-    {
-        if (this.articles == null) {
+
+    public void addArticle( CommandeProduit comProd ) {
+        if ( this.articles == null ) {
             this.articles = new ArrayList<CommandeProduit>();
         }
         this.articles.add( comProd );

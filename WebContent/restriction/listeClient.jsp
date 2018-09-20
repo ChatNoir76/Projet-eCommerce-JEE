@@ -7,8 +7,8 @@
 <title>INTRO - Liste des Clients</title>
 </head>
 <body>
-	<section id='contenu2' class='contenu'>
-		<section id='cadreBlanc2' class='cadreBlanc'>
+	<section id='contenu' class='contenu'>
+		<section id='cadreBlanc' class='cadreBlanc'>
 			<p>ceci est le test du listing des clients</p>
 			<c:forEach var="lc" items="${ listclient }">
 				<p>

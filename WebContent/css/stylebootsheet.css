@@ -31,7 +31,9 @@ body {
   width: 95%;
   height: 95%;
   background-color: RGBa(150, 150, 150, 0.4);
-  border-radius: 5%; }
+  border-radius: 5%; 
+  margin-top: 30px;
+  margin-bottom: 50px}
 
 footer {
   display: flex;
@@ -45,3 +47,12 @@ footer {
   position: fixed;
   bottom: 0;
   color: white; }
+
+.faireRessortir {
+  color: blue;
+  font-size: 1.2em;
+}
+
+.strong {
+  font-weight: bold;  
+  }

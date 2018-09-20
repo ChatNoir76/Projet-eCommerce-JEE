@@ -148,20 +148,25 @@ public class DAOPanier {
             }
             
             if ( rs != null ) {
-                while ( rs.next() ) {                    
-                    if (rs.getInt( 1 ) == idRSCommande)
-                    { // changement / création de panier
+                while ( rs.next() ) {   
+                    
+                    if (rs.getInt( 2 ) != idRSCommande)
+                    { 
                         if (idRSCommande != -1)
-                        { // mise en araylist du panier lors du changement
+                        { // enregistrement panier dans l'historique
                             listPanier.add( p );
                         }
                         
+                        // changement de panier
                         idRSCommande = rs.getInt( 2 );
                         Commande cmd = new Commande(rs.getInt( 2 ),rs.getDouble( 3 ),ServiceDAO.getDateTime( rs.getDate( 4 ), rs.getTime( 4 )),rs.getInt( 1 ));
-                        p = new Panier(cmd,_idClient);
-                    }
-                        p.addArticle( setArticleToPanier(rs) );
+                        p = new Panier(cmd,_idClient); 
+                    }   
+                    
+                    p.addArticle( setArticleToPanier(rs) );
                 }
+                //enregistrement du dernier panier dans l'histo
+                listPanier.add( p );
             }
             
             
@@ -169,9 +174,7 @@ public class DAOPanier {
         } catch ( SQLException e ) {
             throw new DaoException( e.getErrorCode(), e.getMessage() );
         }
-        
-        
-        
+
         return listPanier;
     }
     
@@ -183,38 +186,44 @@ public class DAOPanier {
      * @throws DaoException
      * @throws SQLException
      */
-    public Map<Integer, Integer> validationPanier( int idCommande ) throws DaoException, SQLException {
+    public Map<Integer, Integer> validationPanier( int idCommande ) throws DaoException {
         int errcode;
         String errmsg;
         ResultSet rs = null;
 
         Map<Integer, Integer> ListProd = new HashMap<Integer, Integer>();
 
-        CallableStatement cs = _con.prepareCall( _PSvalidationPanier );
-        // IN
-        cs.setInt( 1, idCommande );
-
-        // OUT
-        cs.registerOutParameter( 2, java.sql.Types.INTEGER );
-        cs.registerOutParameter( 3, java.sql.Types.VARCHAR );
-        cs.execute();
-        rs = cs.getResultSet();
-
-        // Récupération des OUT
-        errcode = cs.getInt( 2 );
-        errmsg = cs.getString( 3 );
-
-        if ( rs != null ) {
-            while ( rs.next() ) {
-                ListProd.put( rs.getInt( 1 ), rs.getInt( 2 ) );
+        CallableStatement cs;
+        try {
+            cs = _con.prepareCall( _PSvalidationPanier );
+    
+            // IN
+            cs.setInt( 1, idCommande );
+    
+            // OUT
+            cs.registerOutParameter( 2, java.sql.Types.INTEGER );
+            cs.registerOutParameter( 3, java.sql.Types.VARCHAR );
+            cs.execute();
+            rs = cs.getResultSet();
+    
+            // Récupération des OUT
+            errcode = cs.getInt( 2 );
+            errmsg = cs.getString( 3 );
+    
+            if ( rs != null ) {
+                while ( rs.next() ) {
+                    ListProd.put( rs.getInt( 1 ), rs.getInt( 2 ) );
+                }
+                rs.close();
             }
-        }
-
-        rs.close();
-
-        // Traitement des informations (id+erreurs)
-        if ( errcode != 0 ) {
-            throw new DaoException( errcode, errmsg );
+    
+            // Traitement des informations (id+erreurs)
+            if ( errcode != 0 ) {
+                throw new DaoException( errcode, errmsg );
+            }
+            
+        } catch ( SQLException e ) {
+            throw new DaoException( e.getErrorCode(), e.getMessage() );
         }
 
         return ListProd;
@@ -271,12 +280,14 @@ public class DAOPanier {
             // Récupération des OUT
             errcode = cs.getInt( 2 );
             errmsg = cs.getString( 3 );
-
-            while ( rs.next() ) {
-                _commande = new Commande( rs.getInt( 1 ), rs.getDouble( 2 ),
-                        ServiceDAO.getDateTime( rs.getDate( 3 ), rs.getTime( 3 ) ), rs.getInt( 4 ) );
+            
+            if (rs != null) {
+                while ( rs.next() ) {
+                    _commande = new Commande( rs.getInt( 1 ), rs.getDouble( 2 ),
+                            ServiceDAO.getDateTime( rs.getDate( 3 ), rs.getTime( 3 ) ), rs.getInt( 4 ) );
+                }
+                rs.close();
             }
-            rs.close();
 
             // Traitement des informations (id+erreurs)
             if ( errcode != 0 || _commande.get_id() == -1 ) {

@@ -85,6 +85,13 @@ public class ServSession {
                 ? null
                 : (ArrayList<Produit>) Controleur.getSession().getAttribute( Controleur.ATT_LISTE_PRODUIT );
     }
+    
+    @SuppressWarnings( "unchecked" )
+    public static ArrayList<Panier> getSessionListPanier() {
+        return Controleur.getSession().getAttribute( Controleur.ATT_LISTE_PANIER ) == null
+                ? new ArrayList<Panier>()
+                : (ArrayList<Panier>) Controleur.getSession().getAttribute( Controleur.ATT_LISTE_PANIER );
+    }
 
     public static Panier getSessionPanier() {
         return Controleur.getSession().getAttribute( Controleur.ATT_PANIER ) == null

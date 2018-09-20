@@ -36,16 +36,8 @@ function refreshPanier()
 function codereduction()
 {
     var cr = document.getElementById('codereduction').value;
-    $.ajax({
-        method: "GET",
-        url:"codebonus?monbonus="+cr,
-        type: "text"
-    }).done(function(){
-        document.getElementById('codereduction').value = "";
-        document.location.href="/eCommerce/panier";
-    }).fail(function(){
-        document.getElementById('errajax').innerText = "erreur avec AJAX !!!";
-    })
+    document.location.href="/eCommerce/codebonus?monbonus="+cr;
+
 }
 
 function deleteWarning()

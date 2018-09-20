@@ -29,6 +29,6 @@
 				</div>
 			</c:forEach>
 		</c:if>
-		<div id="errajax" style="color: yellow" ></div>
+		<div id="errajax" style="color: red" ></div>
 	</aside>
 </article> 

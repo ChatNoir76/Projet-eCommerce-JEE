@@ -21,6 +21,7 @@ import fr.afpa.ecom.controleur.service.ServiceException;
 import fr.afpa.ecom.forms.ClientForm;
 import fr.afpa.ecom.forms.FormsException;
 import fr.afpa.ecom.modele.Client;
+import fr.afpa.ecom.modele.Commande;
 import fr.afpa.ecom.modele.Panier;
 import fr.afpa.ecom.modele.Produit;
 import fr.afpa.ecom.modele.dao.AbstractDAOFactory;
@@ -46,7 +47,9 @@ import fr.afpa.ecom.modele.secondaire.CommandeProduit;
         "/codebonus",
         "/validationpanier",
         "/deleteWarning",
-        "/validation" } )
+        "/validation",
+        "/histoCommande",
+        "/profilclient" } )
 public class Controleur extends HttpServlet {
     private static final long          serialVersionUID       = 1L;
     private static HttpServletRequest  _request;
@@ -61,7 +64,8 @@ public class Controleur extends HttpServlet {
     private static final String        VUE_PRODUIT            = "/WEB-INF/vue/produit.jsp";
     private static final String        VUE_PANIER             = "/WEB-INF/vue/panier.jsp";
     private static final String        VUE_INSCRIPTION        = "/WEB-INF/vue/inscription.jsp";
-    private static final String        VUE_VALIDATION         = "/WEB-INF/vue/validation.jsp";
+    private static final String        VUE_HISTOCOMMANDE      = "/WEB-INF/vue/histocommande.jsp";
+    private static final String        VUE_PROFILCLIENT       = "/WEB-INF/vue/profilclient.jsp";
 
     // HREF : Lien vers une autre page via getServletPath()
     private static final String        HREF_CONNEXION         = "/connexion";
@@ -77,7 +81,8 @@ public class Controleur extends HttpServlet {
     private static final String        HREF_CODEBONUS         = "/codebonus";
     private static final String        HREF_VALIDATIONPANIER  = "/validationpanier";
     private static final String        HREF_DELETEWARNING     = "/deleteWarning";
-    private static final String        HREF_VALIDATION        = "/validation";
+    private static final String        HREF_HISTOCOMMANDE     = "/histoCommande";
+    private static final String        HREF_PROFILCLIENT      = "/profilclient";
 
     // ATT : attribut de la variable de session
     public static final String         ATT_CLIENT             = "client";
@@ -89,6 +94,7 @@ public class Controleur extends HttpServlet {
     public static final String         ATT_PANIER             = "panier";
     public static final String         ATT_ERROR              = "errjsp";
     public static final String         ATT_WARNINGMSG         = "warmsg";
+    public static final String         ATT_LISTE_PANIER       = "listePanier";
 
     // VALATT : Variable récupérées de la session
     private Client                     _VALATT_Client         = null;
@@ -99,7 +105,8 @@ public class Controleur extends HttpServlet {
     private Produit                    _VALATT_Produit        = null;
     private Panier                     _VALATT_Panier         = null;
     private ErrJsp                     _VALATT_Erreur         = null;
-    private ArrayList<String>          _VALATT_WarningJSP     = new ArrayList<String>();
+    private ArrayList<Panier>          _VALATT_ListePanier    = null;
+    private ArrayList<String>          _VALATT_WarningJSP     = null;
 
     // FORM : paramètre de formulaire via methode post (via traitement
     // formulaire())
@@ -193,6 +200,7 @@ public class Controleur extends HttpServlet {
         _VALATT_Produit = ServSession.getSessionProduit();
         _VALATT_Panier = ServSession.getSessionPanier();
         _VALATT_Erreur = ServSession.getSessionErreur();
+        _VALATT_ListePanier = ServSession.getSessionListPanier();
 
         // remise à zéro des erreurs
         generateErrorToJSP( -1, null, null );
@@ -202,7 +210,7 @@ public class Controleur extends HttpServlet {
         _daoFact = AbstractDAOFactory.getFactory( EnumDAO.MySQL );
     }
 
-    private void redirection() throws DaoException, ServiceException, IOException, SQLException {
+    private void redirection() throws DaoException, ServiceException, IOException {
         // récupération de l'url appelée
         String nextPage = _request.getServletPath();
         // récupération de la page à afficher en fonction de l'url
@@ -254,10 +262,15 @@ public class Controleur extends HttpServlet {
             generateWarningToJSP( null );
             break;
         case HREF_VALIDATIONPANIER:
+            // _NEXTVIEW déterminé en fonction du statut de validation
             validationPanier();
             break;
-        case HREF_VALIDATION:
-            _NEXTVIEW = VUE_VALIDATION;
+        case HREF_HISTOCOMMANDE:
+            _NEXTVIEW = VUE_HISTOCOMMANDE;
+            chercheListePanier();
+            break;
+        case HREF_PROFILCLIENT:
+            _NEXTVIEW = VUE_PROFILCLIENT;
             break;
         default:
             _NEXTVIEW = VUE_INDEX;
@@ -304,8 +317,6 @@ public class Controleur extends HttpServlet {
             generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
         } catch ( DaoException e ) {
             generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
-        } catch ( SQLException e ) {
-            generateErrorToJSP( e.getErrorCode(), e.getClass().getName(), e.getMessage() );
         } finally {
             navigateTo( _NEXTVIEW );
         }
@@ -328,8 +339,6 @@ public class Controleur extends HttpServlet {
             generateErrorToJSP( e.get_errCode(), e.getClass().getName(), e.getMessage() );
         } catch ( FormsException e ) {
             generateErrorToJSP( 0, e.getClass().getName(), e.getMessage() );
-        } catch ( SQLException e ) {
-            generateErrorToJSP( e.getErrorCode(), e.getClass().getName(), e.getMessage() );
         } finally {
             navigateTo( null );
         }
@@ -338,13 +347,26 @@ public class Controleur extends HttpServlet {
 
     // METHODE ANNEXE
 
-    private void validationPanier() throws DaoException, SQLException {
+    private void chercheListePanier() throws DaoException {
+        _VALATT_ListePanier = _daoFact.getPanier( _VALATT_Client.get_id() ).getAll();
+        _session.setAttribute( ATT_LISTE_PANIER, _VALATT_ListePanier );
+    }
+
+    private void validationPanier() throws DaoException {
         Map<Integer, Integer> ListProduitPb = _daoFact.getPanier( _VALATT_Client.get_id() )
                 .validationPanier( _VALATT_Panier.get_idCommande() );
 
         if ( ListProduitPb.size() == 0 ) {
-            _NEXTVIEW = VUE_INDEX;
-            
+            _NEXTVIEW = VUE_HISTOCOMMANDE;
+            ServPanier.removePanier();
+            // creation panier bdd
+            ServPanier.initialisationPanier( _VALATT_Client );
+            // recuperation nouveau panier et ajout dans session
+            Panier p = _daoFact.getPanier( _VALATT_Client.get_id() ).getPanier();
+            ServSession.setSessionPanier( p );
+            // mise a jour histo commande
+            chercheListePanier();
+
         } else {
             _NEXTVIEW = VUE_PANIER;
             for ( int idProd : ListProduitPb.keySet() ) {
@@ -362,7 +384,6 @@ public class Controleur extends HttpServlet {
 
     private void setBonus() throws DaoException {
         String monCode = ServSession.getValeurChamp( PARAM_MONBONUS );
-
         switch ( monCode ) {
         case "global10":
             _VALATT_Panier.get_commande().set_remiseGlobale( 0.10 );
@@ -469,17 +490,19 @@ public class Controleur extends HttpServlet {
     }
 
     private void generateWarningToJSP( String warningmsg ) {
-        if (warningmsg != null)
-        {
+        if ( warningmsg != null ) {
+            if (_VALATT_WarningJSP == null) {
+                _VALATT_WarningJSP = new ArrayList<String>();
+            }
             _VALATT_WarningJSP.add( warningmsg );
             _session.setAttribute( ATT_WARNINGMSG, _VALATT_WarningJSP );
+        } else {
+            if (_VALATT_WarningJSP != null) {
+                _VALATT_WarningJSP.clear();
+            }
+            _session.setAttribute( ATT_WARNINGMSG, null  );
         }
-        else
-        {
-            _VALATT_WarningJSP.clear();
-            _session.setAttribute( ATT_WARNINGMSG, null );
-        }
-        
+
     }
 
 }

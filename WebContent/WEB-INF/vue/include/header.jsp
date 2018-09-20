@@ -37,7 +37,8 @@
 				</c:if>
 				<c:if test="${!empty sessionScope.client}">
 			        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-			          <a class="dropdown-item" href="#">Mon Compte Client</a>
+			          <a class="dropdown-item" href="/eCommerce/profilclient">Mon Compte Client</a>
+			          <a class="dropdown-item" href="/eCommerce/histoCommande">Mes Commandes</a>
 			          <a class="dropdown-item" href="/eCommerce/deconnexion">Déconnexion</a>
 			        </div>
 				</c:if>
